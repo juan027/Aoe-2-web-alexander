@@ -1,0 +1,937 @@
+/**
+ * ecoCalculator.css
+ * Estilos medievales técnicos para la Calculadora Económica (AoE2:DE)
+ * Acabados en madera noble, biseles dorados, botonera canónica 44x44px y fórmulas explícitas.
+ */
+
+.eco-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 18px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Iconos Oficiales de Recursos */
+.res-icon {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
+
+.res-icon-xs {
+  width: 13px;
+  height: 13px;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+.res-icon-lg {
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+/* Encabezado Principal */
+.eco-header-board {
+  background: 
+    linear-gradient(180deg, rgba(35, 20, 10, 0.96) 0%, rgba(18, 10, 5, 0.98) 100%),
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.15), transparent 70%);
+  border: 2px solid var(--gold-primary, #d4af37);
+  border-radius: 6px;
+  padding: 16px 22px;
+  box-shadow: 
+    inset 1px 1px 0 rgba(255, 235, 170, 0.25),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.9),
+    0 6px 16px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eco-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.eco-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eco-main-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold-highlight, #ffebaa);
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eco-sub-title {
+  font-size: 0.88rem;
+  color: #cbb896;
+  margin: 0;
+}
+
+/* MONITOR TELEMETRÍA (HUD) DE RATIOS POR ALDEANO INDIVIDUAL */
+.eco-rates-hud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: rgba(14, 8, 4, 0.85);
+  border: 1px solid #7c5c28;
+  border-radius: 5px;
+  padding: 10px 14px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.rate-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #25160b;
+  border: 1px solid #5a3d1c;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 0.86rem;
+  color: #e5d5be;
+  transition: border-color 0.15s;
+}
+
+.rate-pill:hover {
+  border-color: #d4af37;
+}
+
+.rate-pill strong {
+  color: #ffd875;
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+}
+
+.rate-pill small {
+  color: #a49170;
+  font-size: 0.74rem;
+}
+
+/* Barra de Parámetros Globales (Civ, Edad, Granjas) */
+.eco-controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 10px 14px;
+  border-radius: 4px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.eco-control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eco-control-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-primary, #d4af37);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.eco-select {
+  background: #1c1108;
+  color: #ffebaa;
+  border: 1px solid #7c5c28;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.eco-select:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+}
+
+/* REDISEÑO: BOTONERA DE CASILLAS DE TECNOLOGÍAS ECONÓMICAS (44x44px) */
+.eco-techs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eco-techs-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eco-techs-title {
+  font-size: 0.82rem;
+  color: #e2c082;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.eco-techs-categories-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.eco-tech-cat-cluster {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(20, 12, 6, 0.6);
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px solid #483015;
+}
+
+.eco-cat-label {
+  font-size: 0.72rem;
+  color: #a49170;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-right: 2px;
+}
+
+/* Casilla Cuadrada Canónica (44x44px) */
+.eco-tech-tile {
+  width: 44px;
+  height: 44px;
+  background: #150c05;
+  border: 2px solid #5a3d1c;
+  border-radius: 4px;
+  padding: 2px;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.eco-tech-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+  transition: filter 0.15s;
+}
+
+/* Estado Inactivo (Disponible en la edad pero no activada) */
+.eco-tech-tile.inactive img {
+  filter: grayscale(85%) opacity(0.55);
+}
+
+.eco-tech-tile.inactive:hover {
+  border-color: #d4af37;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+}
+
+.eco-tech-tile.inactive:hover img {
+  filter: grayscale(15%) opacity(0.9);
+}
+
+/* Estado Activo (Investigada) */
+.eco-tech-tile.active {
+  border-color: #ffd875;
+  box-shadow: 
+    0 0 10px rgba(212, 175, 55, 0.6),
+    inset 0 0 6px rgba(255, 235, 170, 0.4);
+  transform: translateY(-1px);
+}
+
+.eco-tech-tile.active img {
+  filter: none;
+}
+
+.eco-tech-tile.active::after {
+  content: '✓';
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ffd875;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Estado Bloqueado (Edad superior a la actual) */
+.eco-tech-tile.locked {
+  cursor: not-allowed;
+  opacity: 0.35;
+  border-color: #3d2410;
+}
+
+.eco-tech-tile.locked img {
+  filter: grayscale(100%) opacity(0.3);
+}
+
+.eco-tech-tile.locked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37'%3E%3Cpath d='M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+  opacity: 0.85;
+}
+
+/* Presets Rápidos */
+.eco-presets-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+  padding-top: 10px;
+}
+
+.eco-preset-btn {
+  background: #24160c;
+  color: #e5d1ae;
+  border: 1px solid #6b4d24;
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.eco-preset-btn:hover {
+  background: #3b2413;
+  border-color: #d4af37;
+  color: #fff;
+}
+
+/* Cuadrícula Principal: Izquierda (Cola) y Derecha (Resultados Macro) */
+.eco-main-layout {
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  gap: 22px;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .eco-main-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tarjetas de Cola de Producción */
+.eco-queue-panel {
+  background: 
+    linear-gradient(180deg, rgba(28, 16, 8, 0.95) 0%, rgba(14, 8, 4, 0.98) 100%);
+  border: 2px solid #5a3d1c;
+  border-radius: 6px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.eco-panel-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #d4af37;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  padding-bottom: 8px;
+}
+
+.eco-add-btn {
+  background: linear-gradient(180deg, #583c18 0%, #2f1d0a 100%);
+  border: 1px solid #d4af37;
+  color: #ffebaa;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.eco-add-btn:hover {
+  background: linear-gradient(180deg, #704d20 0%, #422a10 100%);
+}
+
+.eco-queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eco-unit-row {
+  background: 
+    linear-gradient(180deg, rgba(42, 26, 14, 0.9) 0%, rgba(20, 12, 6, 0.95) 100%);
+  border: 1px solid #7c5c28;
+  border-radius: 5px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: inset 1px 1px 0 rgba(255, 235, 170, 0.1), 0 3px 8px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.15s;
+}
+
+.eco-unit-row:hover {
+  border-color: #d4af37;
+}
+
+.eco-unit-top-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eco-unit-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eco-unit-icon-frame {
+  width: 40px;
+  height: 40px;
+  background: #100a05;
+  border: 1px solid #d4af37;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.eco-unit-icon-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.eco-unit-name-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eco-unit-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eco-unit-bld-tag {
+  font-size: 0.76rem;
+  color: #b59d78;
+}
+
+/* Control de Edificios de Producción (Steppers) */
+.eco-stepper-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #140d07;
+  border: 1px solid #5a3d1c;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+
+.eco-step-btn {
+  background: #331f0d;
+  color: #ffd875;
+  border: 1px solid #704e22;
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.eco-step-btn:hover {
+  background: #503115;
+  border-color: #d4af37;
+}
+
+.eco-step-val {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 700;
+  color: #fff;
+  font-size: 0.92rem;
+}
+
+.eco-step-label {
+  font-size: 0.78rem;
+  color: #9f8863;
+  margin-left: 2px;
+}
+
+.eco-remove-btn {
+  background: transparent;
+  border: none;
+  color: #b86252;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0 4px;
+  transition: color 0.15s;
+}
+
+.eco-remove-btn:hover {
+  color: #ff4d4d;
+}
+
+/* Métricas de Costes y VT de la Unidad */
+.eco-unit-metrics-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px dashed rgba(212, 175, 55, 0.2);
+}
+
+.eco-costs-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+}
+
+.eco-cost-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.eco-cost-pill.food { color: #f5a623; }
+.eco-cost-pill.wood { color: #8bc34a; }
+.eco-cost-pill.gold { color: #ffd700; }
+.eco-cost-pill.stone { color: #b0bec5; }
+
+/* Descuentos Tachados */
+del.base-cost {
+  color: #888;
+  font-size: 0.76rem;
+  margin-right: 2px;
+  text-decoration: line-through;
+}
+
+.eco-discount-tag {
+  background: rgba(46, 125, 50, 0.35);
+  border: 1px solid #4caf50;
+  color: #a5d6a7;
+  font-size: 0.7rem;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-left: 4px;
+}
+
+.eco-workrate-badge {
+  background: rgba(255, 152, 0, 0.18);
+  border: 1px solid #ff9800;
+  color: #ffb74d;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 10px;
+  cursor: help;
+  white-space: nowrap;
+}
+
+/* MÉTRICA: Villager Work Time (VT) */
+.eco-vt-metric-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(40, 24, 10, 0.9);
+  border: 1px solid #b8860b;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #ffebaa;
+  box-shadow: inset 0 0 6px rgba(184, 134, 11, 0.3);
+}
+
+.eco-vt-metric-badge .vt-label {
+  font-weight: 700;
+  color: #ffd875;
+}
+
+.eco-vt-metric-badge .vt-cycles {
+  background: #4a3014;
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+/* Panel de Resultados Macroeconómicos (Derecha) */
+.eco-results-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Tarjeta Total de Aldeanos Requeridos */
+.eco-total-vills-card {
+  background: 
+    linear-gradient(180deg, rgba(50, 30, 14, 0.95) 0%, rgba(26, 14, 6, 0.98) 100%),
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.2), transparent 70%);
+  border: 2px solid var(--gold-primary, #d4af37);
+  border-radius: 6px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 
+    inset 1px 1px 0 rgba(255, 235, 170, 0.3),
+    0 8px 20px rgba(0, 0, 0, 0.8);
+}
+
+.eco-total-vills-label {
+  font-size: 0.88rem;
+  text-transform: uppercase;
+  color: #e5c58a;
+  letter-spacing: 1px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.eco-total-vills-number {
+  font-family: 'Cinzel', serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 14px rgba(212, 175, 55, 0.5);
+  margin: 4px 0;
+}
+
+.eco-total-vills-sub {
+  font-size: 0.8rem;
+  color: #c9b48e;
+}
+
+/* Desglose por Recurso con FÓRMULA ARITMÉTICA EXPLÍCITA */
+.eco-resource-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eco-res-card {
+  background: #1f1208;
+  border: 1px solid #5a3d1c;
+  border-radius: 5px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.eco-res-card.food { border-left: 3px solid #f5a623; }
+.eco-res-card.wood { border-left: 3px solid #8bc34a; }
+.eco-res-card.gold { border-left: 3px solid #ffd700; }
+.eco-res-card.stone { border-left: 3px solid #b0bec5; }
+
+.eco-res-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eco-res-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #e0d0b0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eco-res-vills {
+  font-family: 'Cinzel', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* FÓRMULA ARITMÉTICA VISIBLE: Demanda / Ratio = Aldeanos */
+.eco-arithmetic-formula {
+  background: rgba(0, 0, 0, 0.45);
+  padding: 5px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.77rem;
+  color: #c9b48e;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.math-fraction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.math-num {
+  border-bottom: 1px solid #b59d78;
+  padding-bottom: 1px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.math-denom {
+  padding-top: 1px;
+  color: #ffd875;
+}
+
+.math-equals {
+  font-weight: 700;
+  color: #d4af37;
+}
+
+.math-result {
+  color: #fff;
+}
+
+.math-result strong {
+  color: #ffd875;
+}
+
+/* MÉTRICA: SOBRECOSTE DE RESIEMBRA DE GRANJAS (FARM RESEEDING OVERHEAD) */
+.eco-farm-overhead-card {
+  background: 
+    linear-gradient(180deg, rgba(38, 22, 10, 0.95) 0%, rgba(18, 10, 4, 0.98) 100%),
+    radial-gradient(circle at 100% 0%, rgba(139, 195, 74, 0.15), transparent 70%);
+  border: 2px solid #7c5c28;
+  border-radius: 6px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.eco-farm-overhead-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding-bottom: 6px;
+}
+
+.eco-farm-overhead-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffd875;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eco-reseed-badge {
+  background: #2a3a14;
+  border: 1px solid #8bc34a;
+  color: #b9f6ca;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.eco-overhead-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.eco-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.eco-stat-item .stat-lbl {
+  color: #9f8c6d;
+  font-size: 0.74rem;
+}
+
+.eco-stat-item .stat-val {
+  color: #fff;
+  font-weight: 600;
+}
+
+.eco-stat-item .stat-val.highlight {
+  color: #8bc34a;
+}
+
+.eco-wood-reseed-split {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: #c9bca0;
+}
+
+.eco-split-bar {
+  height: 6px;
+  background: #140d07;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+
+.eco-split-fill-direct {
+  background: #4caf50;
+  height: 100%;
+}
+
+.eco-split-fill-reseed {
+  background: #ff9800;
+  height: 100%;
+}
+
+/* Modal Picker de Unidades */
+.eco-picker-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.eco-picker-content {
+  background: #1a0f07;
+  border: 2px solid #d4af37;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 760px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+}
+
+.eco-picker-header {
+  padding: 12px 18px;
+  border-bottom: 1px solid #7c5c28;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eco-picker-header h3 {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  color: #ffebaa;
+  font-size: 1.15rem;
+}
+
+.eco-picker-grid {
+  padding: 16px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.eco-picker-card {
+  background: #25160b;
+  border: 1px solid #5a3d1c;
+  border-radius: 4px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.eco-picker-card:hover {
+  border-color: #d4af37;
+  background: #36200f;
+  transform: translateY(-2px);
+}
+
+.eco-picker-card img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border: 1px solid #7c5c28;
+  border-radius: 3px;
+}
+
+.eco-picker-card span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #f0e0c0;
+}

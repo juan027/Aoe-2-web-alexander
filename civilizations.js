@@ -1,0 +1,1918 @@
+/**
+ * civilizations.js
+ * Catálogo Maestro Canónico de Civilizaciones para Age of Empires II: DE y Facciones del Mod.
+ * ÚNICA FUENTE DE VERDAD (Single Source of Truth).
+ *
+ * Contiene exactamente las 56 civilizaciones jugables (45 oficiales + 11 del mod)
+ * más la opción canónica 'Genérico' anclada en la primera posición (index 0).
+ * Incluye CIVILIZATIONS_DATA con resolución dinámica de Unidades Únicas y edificios de entrenamiento canónicos.
+ */
+
+(function (global, factory) {
+  if (typeof module === 'object' && typeof module.exports === 'object') {
+    module.exports = factory();
+  } else {
+    const exports = factory();
+    global.CIVILIZATIONS = exports.CIVILIZATIONS;
+    global.CIVILIZATIONS_DATA = exports.CIVILIZATIONS_DATA;
+    global.PLAYABLE_CIVILIZATIONS = exports.PLAYABLE_CIVILIZATIONS;
+    global.ALL_CIVILIZATIONS = exports.ALL_CIVILIZATIONS;
+    global.getCivById = exports.getCivById;
+    global.getCivByName = exports.getCivByName;
+    global.getCivilizationData = exports.getCivilizationData;
+    global.getUniqueUnitsForCiv = exports.getUniqueUnitsForCiv;
+    global.getSortedCivilizations = exports.getSortedCivilizations;
+    global.civilizationsModule = exports;
+  }
+})(typeof window !== 'undefined' ? window : this, function () {
+  'use strict';
+
+  const CIVILIZATIONS = [
+    { id: 'generic', name: 'Genérico', official: false },
+    // 56 civilizaciones vigentes (oficiales + facciones mod - sin Holandeses)
+    { id: 'armenians', name: 'Armenios', official: true },
+    { id: 'aztecs', name: 'Aztecas', official: true },
+    { id: 'bengalis', name: 'Bengalíes', official: true },
+    { id: 'berbers', name: 'Bereberes', official: true },
+    { id: 'burmese', name: 'Birmanos', official: true },
+    { id: 'byzantines', name: 'Bizantinos', official: true },
+    { id: 'bohemians', name: 'Bohemios', official: true },
+    { id: 'burgundians', name: 'Borgoñones', official: true },
+    { id: 'britons', name: 'Britanos', official: true },
+    { id: 'bulgarians', name: 'Búlgaros', official: true },
+    { id: 'celts', name: 'Celtas', official: true },
+    { id: 'chinese', name: 'Chinos', official: true },
+    { id: 'koreans', name: 'Coreanos', official: true },
+    { id: 'cumans', name: 'Cumanos', official: true },
+    { id: 'danes', name: 'Daneses', official: false },
+    { id: 'dravidians', name: 'Dravídicos', official: true },
+    { id: 'slavs', name: 'Eslavos', official: true },
+    { id: 'spanish', name: 'Españoles', official: true },
+    { id: 'ethiopians', name: 'Etíopes', official: true },
+    { id: 'franks', name: 'Francos', official: true },
+    { id: 'georgians', name: 'Georgianos', official: true },
+    { id: 'goths', name: 'Godos', official: true },
+    { id: 'gurjaras', name: 'Gurjaras', official: true },
+    { id: 'hindustanis', name: 'Hindustaníes', official: true },
+    { id: 'huns', name: 'Hunos', official: true },
+    { id: 'incas', name: 'Incas', official: true },
+    { id: 'italians', name: 'Italianos', official: true },
+    { id: 'japanese', name: 'Japoneses', official: true },
+    { id: 'khmer', name: 'Jemeres', official: true },
+    { id: 'jurchens', name: 'Jurchen', official: false },
+    { id: 'khitans', name: 'Khitanes', official: false },
+    { id: 'lithuanians', name: 'Lituanos', official: true },
+    { id: 'magyars', name: 'Magiares', official: true },
+    { id: 'malay', name: 'Malayos', official: true },
+    { id: 'malians', name: 'Malienses', official: true },
+    { id: 'mapuche', name: 'Mapuches', official: false },
+    { id: 'mayans', name: 'Mayas', official: true },
+    { id: 'mongols', name: 'Mongoles', official: true },
+    { id: 'muisca', name: 'Muiscas', official: false },
+    { id: 'persians', name: 'Persas', official: true },
+    { id: 'poles', name: 'Polacos', official: true },
+    { id: 'portuguese', name: 'Portugueses', official: true },
+    { id: 'romans', name: 'Romanos', official: true },
+    { id: 'saxons', name: 'Sajones', official: false },
+    { id: 'saracens', name: 'Sarracenos', official: true },
+    { id: 'shu', name: 'Shu', official: false },
+    { id: 'sicilians', name: 'Sicilianos', official: true },
+    { id: 'tatars', name: 'Tártaros', official: true },
+    { id: 'teutons', name: 'Teutones', official: true },
+    { id: 'tupi', name: 'Tupís', official: false },
+    { id: 'turks', name: 'Turcos', official: true },
+    { id: 'varangians', name: 'Varegos', official: false },
+    { id: 'vietnamese', name: 'Vietnamitas', official: true },
+    { id: 'vikings', name: 'Vikingos', official: true },
+    { id: 'wei', name: 'Wei', official: false },
+    { id: 'wu', name: 'Wu', official: false }
+  ];
+
+  // =========================================================================
+  // AUDITORÍA Y COMPROBACIÓN PROGRAMÁTICA OBLIGATORIA
+  // =========================================================================
+  const playableCivs = CIVILIZATIONS.filter(civ => civ.id !== 'generic');
+  console.assert(playableCivs.length === 56, 'Error: Se esperaban 56 civilizaciones, pero hay ' + playableCivs.length);
+  if (playableCivs.length !== 56) {
+    console.error('[Catálogo de Civilizaciones] Discrepancia: ' + playableCivs.length + ' civilizaciones encontradas (esperadas: 56)');
+  }
+
+  // Comprobar ausencia estricta de Holandeses
+  const hasDutch = CIVILIZATIONS.some(c => c.id === 'dutch' || c.name.toLowerCase().includes('holand'));
+  console.assert(!hasDutch, 'Error: Se detectó la entrada espuria Holandeses en el catálogo.');
+
+  // =========================================================================
+  // DICCIONARIO MAESTRO DE CIVILIZACIONES Y UNIDADES ÚNICAS (CIVILIZATIONS_DATA)
+  // =========================================================================
+  const CIVILIZATIONS_DATA = Object.freeze({
+    "generic": {
+        "id": "generic",
+        "name": "Genérico",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 1910,
+                "name": "Guerrero Champa",
+                "internalName": "champa_warrior",
+                "building": "barracks",
+                "age": "castle",
+                "icon": "1910.png",
+                "cost": {
+                    "food": 65,
+                    "gold": 30
+                },
+                "trainTime": 16
+            },
+            {
+                "id": 1911,
+                "name": "Guerrero Champa de élite",
+                "internalName": "elite_champa_warrior",
+                "building": "barracks",
+                "age": "imperial",
+                "icon": "1910.png",
+                "cost": {
+                    "food": 65,
+                    "gold": 30
+                },
+                "trainTime": 14
+            },
+            {
+                "id": 1901,
+                "name": "Jinete con boleadoras",
+                "internalName": "bolas_rider",
+                "building": "archery_range",
+                "age": "castle",
+                "icon": "1901.png",
+                "cost": {
+                    "food": 55,
+                    "gold": 60
+                },
+                "trainTime": 21
+            },
+            {
+                "id": 1902,
+                "name": "Jinete con boleadoras de élite",
+                "internalName": "elite_bolas_rider",
+                "building": "archery_range",
+                "age": "imperial",
+                "icon": "1901.png",
+                "cost": {
+                    "food": 55,
+                    "gold": 60
+                },
+                "trainTime": 19
+            },
+            {
+                "id": 1920,
+                "name": "Granadero",
+                "internalName": "grenadier",
+                "building": "archery_range",
+                "age": "imperial",
+                "icon": "1920.png",
+                "cost": {
+                    "wood": 60,
+                    "gold": 50
+                },
+                "trainTime": 24
+            },
+            {
+                "id": 1800,
+                "name": "Trebuchet a tracción",
+                "internalName": "traction_trebuchet",
+                "building": "siege_workshop",
+                "age": "castle",
+                "icon": "428.png",
+                "cost": {
+                    "wood": 170,
+                    "gold": 100
+                },
+                "trainTime": 35
+            }
+        ]
+    },
+    "armenians": {
+        "id": "armenians",
+        "name": "Armenios",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1800,
+                "name": "Arquero arco compuesto",
+                "internalName": "composite_bowman",
+                "building": "castle",
+                "age": "castle",
+                "icon": "407.png"
+            },
+            {
+                "id": 1802,
+                "name": "Arq. con arco compuesto de E.",
+                "internalName": "elite_composite_bowman",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "522.png"
+            },
+            {
+                "id": 1811,
+                "name": "Sacerdote guerrero",
+                "internalName": "warrior_priest",
+                "building": "castle",
+                "age": "castle",
+                "icon": "409.png"
+            }
+        ]
+    },
+    "aztecs": {
+        "id": "aztecs",
+        "name": "Aztecas",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 725,
+                "name": "Guerrero jaguar",
+                "internalName": "jaguar_warrior",
+                "building": "castle",
+                "age": "castle",
+                "icon": "110.png"
+            },
+            {
+                "id": 726,
+                "name": "Guerrero jaguar de élite",
+                "internalName": "elite_jaguar_warrior",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "486.png"
+            }
+        ]
+    },
+    "bengalis": {
+        "id": "bengalis",
+        "name": "Bengalíes",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1759,
+                "name": "Ratha",
+                "internalName": "ratha",
+                "building": "castle",
+                "age": "castle",
+                "icon": "389.png"
+            },
+            {
+                "id": 1761,
+                "name": "Ratha de élite",
+                "internalName": "elite_ratha",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "520.png"
+            }
+        ]
+    },
+    "berbers": {
+        "id": "berbers",
+        "name": "Bereberes",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1010,
+                "name": "Escaramuzador zenete",
+                "internalName": "genitour",
+                "building": "archery_range",
+                "age": "castle",
+                "icon": "201.png"
+            },
+            {
+                "id": 1012,
+                "name": "Escaramuzador zenete de élite",
+                "internalName": "elite_genitour",
+                "building": "archery_range",
+                "age": "imperial",
+                "icon": "499.png"
+            },
+            {
+                "id": 1007,
+                "name": "Arquero en camello",
+                "internalName": "camel_archer",
+                "building": "castle",
+                "age": "castle",
+                "icon": "191.png"
+            },
+            {
+                "id": 1009,
+                "name": "Arquero en camello de élite",
+                "internalName": "elite_camel_archer",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "498.png"
+            }
+        ]
+    },
+    "burmese": {
+        "id": "burmese",
+        "name": "Birmanos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1126,
+                "name": "Arambai",
+                "internalName": "arambai",
+                "building": "castle",
+                "age": "castle",
+                "icon": "230.png"
+            },
+            {
+                "id": 1128,
+                "name": "Arambai de élite",
+                "internalName": "elite_arambai",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "504.png"
+            }
+        ]
+    },
+    "byzantines": {
+        "id": "byzantines",
+        "name": "Bizantinos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 40,
+                "name": "Catafracta",
+                "internalName": "cataphract",
+                "building": "castle",
+                "age": "castle",
+                "icon": "35.png"
+            },
+            {
+                "id": 553,
+                "name": "Catafracta de élite",
+                "internalName": "elite_cataphract",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "476.png"
+            }
+        ]
+    },
+    "bohemians": {
+        "id": "bohemians",
+        "name": "Bohemios",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1709,
+                "name": "Obús",
+                "internalName": "houfnice",
+                "building": "siege_workshop",
+                "age": "imperial",
+                "icon": "372.png"
+            },
+            {
+                "id": 1704,
+                "name": "Carro de guerra husita",
+                "internalName": "hussite_wagon",
+                "building": "castle",
+                "age": "castle",
+                "icon": "370.png"
+            },
+            {
+                "id": 1706,
+                "name": "Carro de guerra husita de élite",
+                "internalName": "elite_hussite_wagon",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "514.png"
+            }
+        ]
+    },
+    "burgundians": {
+        "id": "burgundians",
+        "name": "Borgoñones",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1699,
+                "name": "Milicia flamenca",
+                "internalName": "flemish_militia",
+                "building": "barracks",
+                "age": "feudal",
+                "icon": "354.png"
+            },
+            {
+                "id": 1655,
+                "name": "Costiller",
+                "internalName": "coustillier",
+                "building": "castle",
+                "age": "castle",
+                "icon": "355.png"
+            },
+            {
+                "id": 1657,
+                "name": "Costiller de élite",
+                "internalName": "elite_coustillier",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "511.png"
+            }
+        ]
+    },
+    "britons": {
+        "id": "britons",
+        "name": "Britanos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 8,
+                "name": "Arquero con arco largo",
+                "internalName": "longbowman",
+                "building": "castle",
+                "age": "castle",
+                "icon": "41.png"
+            },
+            {
+                "id": 530,
+                "name": "Arquero con arco largo de élite",
+                "internalName": "elite_longbowman",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "472.png"
+            }
+        ]
+    },
+    "bulgarians": {
+        "id": "bulgarians",
+        "name": "Búlgaros",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1225,
+                "name": "Konnik",
+                "internalName": "konnik",
+                "building": "castle",
+                "age": "castle",
+                "icon": "249.png"
+            },
+            {
+                "id": 1227,
+                "name": "Konnik de élite",
+                "internalName": "elite_konnik",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "506.png"
+            },
+            {
+                "id": 1254,
+                "name": "Konnik",
+                "internalName": "konnik",
+                "building": "castle",
+                "age": "castle",
+                "icon": "249.png"
+            },
+            {
+                "id": 1255,
+                "name": "Konnik de élite",
+                "internalName": "elite_konnik",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "506.png"
+            }
+        ]
+    },
+    "celts": {
+        "id": "celts",
+        "name": "Celtas",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 232,
+                "name": "Incursor azul",
+                "internalName": "woad_raider",
+                "building": "castle",
+                "age": "castle",
+                "icon": "47.png"
+            },
+            {
+                "id": 534,
+                "name": "Incursor azul de élite",
+                "internalName": "elite_woad_raider",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "475.png"
+            }
+        ]
+    },
+    "chinese": {
+        "id": "chinese",
+        "name": "Chinos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1302,
+                "name": "Bote dragón",
+                "internalName": "dragon_ship",
+                "building": "dock",
+                "age": "imperial",
+                "icon": "178.png"
+            },
+            {
+                "id": 73,
+                "name": "Chu ko nu",
+                "internalName": "chu_ko_nu",
+                "building": "castle",
+                "age": "castle",
+                "icon": "36.png"
+            },
+            {
+                "id": 559,
+                "name": "Chu ko nu de élite",
+                "internalName": "elite_chu_ko_nu",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "482.png"
+            }
+        ]
+    },
+    "koreans": {
+        "id": "koreans",
+        "name": "Coreanos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 831,
+                "name": "Barco tortuga",
+                "internalName": "turtle_ship",
+                "building": "dock",
+                "age": "castle",
+                "icon": "116.png"
+            },
+            {
+                "id": 832,
+                "name": "Barco tortuga de élite",
+                "internalName": "elite_turtle_ship",
+                "building": "dock",
+                "age": "imperial",
+                "icon": "491.png"
+            },
+            {
+                "id": 827,
+                "name": "Carreta de guerra",
+                "internalName": "war_wagon",
+                "building": "castle",
+                "age": "castle",
+                "icon": "117.png"
+            },
+            {
+                "id": 829,
+                "name": "Carreta de guerra de élite",
+                "internalName": "elite_war_wagon",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "490.png"
+            }
+        ]
+    },
+    "cumans": {
+        "id": "cumans",
+        "name": "Cumanos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1231,
+                "name": "Kipchak",
+                "internalName": "kipchak",
+                "building": "castle",
+                "age": "castle",
+                "icon": "252.png"
+            },
+            {
+                "id": 1233,
+                "name": "Kipchak de élite",
+                "internalName": "elite_kipchak",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "508.png"
+            },
+            {
+                "id": 1260,
+                "name": "Kipchak de élite",
+                "internalName": "elite_kipchak",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "508.png"
+            }
+        ]
+    },
+    "danes": {
+        "id": "danes",
+        "name": "Daneses",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 2711,
+                "name": "Vikingo de Jomsborg",
+                "internalName": "jomsviking",
+                "building": "castle",
+                "age": "castle",
+                "icon": "908.png"
+            },
+            {
+                "id": 2712,
+                "name": "Vikingo de Jomsborg de élite",
+                "internalName": "elite_jomsviking",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "909.png"
+            }
+        ]
+    },
+    "dravidians": {
+        "id": "dravidians",
+        "name": "Dravídicos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1750,
+                "name": "Thirisadai",
+                "internalName": "thirisadai",
+                "building": "dock",
+                "age": "imperial",
+                "icon": "387.png"
+            },
+            {
+                "id": 1735,
+                "name": "Espadachín urumi",
+                "internalName": "urumi_swordsman",
+                "building": "castle",
+                "age": "castle",
+                "icon": "386.png"
+            },
+            {
+                "id": 1737,
+                "name": "Espadachín urumi de élite",
+                "internalName": "elite_urumi_swordsman",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "515.png"
+            }
+        ]
+    },
+    "slavs": {
+        "id": "slavs",
+        "name": "Eslavos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 876,
+                "name": "Boyardo",
+                "internalName": "boyar",
+                "building": "castle",
+                "age": "castle",
+                "icon": "114.png"
+            },
+            {
+                "id": 878,
+                "name": "Boyardo de élite",
+                "internalName": "elite_boyar",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "494.png"
+            }
+        ]
+    },
+    "spanish": {
+        "id": "spanish",
+        "name": "Españoles",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 771,
+                "name": "Conquistador",
+                "internalName": "conquistador",
+                "building": "castle",
+                "age": "castle",
+                "icon": "106.png"
+            },
+            {
+                "id": 773,
+                "name": "Conquistador de élite",
+                "internalName": "elite_conquistador",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "489.png"
+            },
+            {
+                "id": 775,
+                "name": "Misionero",
+                "internalName": "missionary",
+                "building": "monastery",
+                "age": "castle",
+                "icon": "107.png"
+            }
+        ]
+    },
+    "ethiopians": {
+        "id": "ethiopians",
+        "name": "Etíopes",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1016,
+                "name": "Shotelai",
+                "internalName": "shotel_warrior",
+                "building": "castle",
+                "age": "castle",
+                "icon": "195.png"
+            },
+            {
+                "id": 1018,
+                "name": "Shotelai de élite",
+                "internalName": "elite_shotel_warrior",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "501.png"
+            }
+        ]
+    },
+    "franks": {
+        "id": "franks",
+        "name": "Francos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 281,
+                "name": "Lanzador de hachas",
+                "internalName": "throwing_axeman",
+                "building": "castle",
+                "age": "castle",
+                "icon": "46.png"
+            },
+            {
+                "id": 531,
+                "name": "Lanzador de hachas de élite",
+                "internalName": "elite_throwing_axeman",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "473.png"
+            }
+        ]
+    },
+    "georgians": {
+        "id": "georgians",
+        "name": "Georgianos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1803,
+                "name": "Monaspa",
+                "internalName": "monaspa",
+                "building": "castle",
+                "age": "castle",
+                "icon": "408.png"
+            },
+            {
+                "id": 1805,
+                "name": "Monaspa de élite",
+                "internalName": "elite_monaspa",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "523.png"
+            }
+        ]
+    },
+    "goths": {
+        "id": "goths",
+        "name": "Godos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 759,
+                "name": "Huscarle",
+                "internalName": "huskarl",
+                "building": "barracks",
+                "age": "castle",
+                "icon": "50.png"
+            },
+            {
+                "id": 761,
+                "name": "Huscarle de élite",
+                "internalName": "elite_huskarl",
+                "building": "barracks",
+                "age": "imperial",
+                "icon": "478.png"
+            },
+            {
+                "id": 41,
+                "name": "Huscarle",
+                "internalName": "huskarl",
+                "building": "castle",
+                "age": "castle",
+                "icon": "50.png"
+            },
+            {
+                "id": 555,
+                "name": "Huscarle de élite",
+                "internalName": "elite_huskarl",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "478.png"
+            }
+        ]
+    },
+    "gurjaras": {
+        "id": "gurjaras",
+        "name": "Gurjaras",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1755,
+                "name": "Explorador a camello",
+                "internalName": "camel_scout",
+                "building": "stable",
+                "age": "feudal",
+                "icon": "392.png"
+            },
+            {
+                "id": 1751,
+                "name": "Jinete shrivamsha",
+                "internalName": "shrivamsha_rider",
+                "building": "stable",
+                "age": "castle",
+                "icon": "391.png"
+            },
+            {
+                "id": 1753,
+                "name": "Jinete Shrivamsha de E.",
+                "internalName": "elite_shrivamsha_rider",
+                "building": "stable",
+                "age": "imperial",
+                "icon": "519.png"
+            },
+            {
+                "id": 1741,
+                "name": "Lanzador de chakrams",
+                "internalName": "chakram_thrower",
+                "building": "castle",
+                "age": "castle",
+                "icon": "390.png"
+            },
+            {
+                "id": 1743,
+                "name": "Lanzador de chakrams de élite",
+                "internalName": "elite_chakram_thrower",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "517.png"
+            }
+        ]
+    },
+    "hindustanis": {
+        "id": "hindustanis",
+        "name": "Hindustaníes",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 207,
+                "name": "Jinete de camello imperial",
+                "internalName": "imperial_camel_rider",
+                "building": "stable",
+                "age": "imperial",
+                "icon": "185.png"
+            },
+            {
+                "id": 1747,
+                "name": "Ghulam",
+                "internalName": "ghulam",
+                "building": "castle",
+                "age": "castle",
+                "icon": "385.png"
+            },
+            {
+                "id": 1749,
+                "name": "Ghulam de élite",
+                "internalName": "elite_ghulam",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "518.png"
+            }
+        ]
+    },
+    "huns": {
+        "id": "huns",
+        "name": "Hunos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 886,
+                "name": "Tarcano",
+                "internalName": "tarkan",
+                "building": "stable",
+                "age": "castle",
+                "icon": "105.png"
+            },
+            {
+                "id": 887,
+                "name": "Tarcano de élite",
+                "internalName": "elite_tarkan",
+                "building": "stable",
+                "age": "imperial",
+                "icon": "487.png"
+            },
+            {
+                "id": 755,
+                "name": "Tarcano",
+                "internalName": "tarkan",
+                "building": "castle",
+                "age": "castle",
+                "icon": "105.png"
+            },
+            {
+                "id": 757,
+                "name": "Tarcano de élite",
+                "internalName": "elite_tarkan",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "487.png"
+            }
+        ]
+    },
+    "incas": {
+        "id": "incas",
+        "name": "Incas",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 879,
+                "name": "Kamayuk",
+                "internalName": "kamayuk",
+                "building": "castle",
+                "age": "castle",
+                "icon": "97.png"
+            },
+            {
+                "id": 881,
+                "name": "Kamayuk de élite",
+                "internalName": "elite_kamayuk",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "495.png"
+            }
+        ]
+    },
+    "italians": {
+        "id": "italians",
+        "name": "Italianos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 882,
+                "name": "Condotiero",
+                "internalName": "condottiero",
+                "building": "barracks",
+                "age": "imperial",
+                "icon": "134.png"
+            },
+            {
+                "id": 866,
+                "name": "Genovés ballestero",
+                "internalName": "genoese_crossbowman",
+                "building": "castle",
+                "age": "castle",
+                "icon": "133.png"
+            },
+            {
+                "id": 868,
+                "name": "Genovés ballestero de élite",
+                "internalName": "elite_genoese_crossbowman",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "492.png"
+            }
+        ]
+    },
+    "japanese": {
+        "id": "japanese",
+        "name": "Japoneses",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 291,
+                "name": "Samurai",
+                "internalName": "samurai",
+                "building": "castle",
+                "age": "castle",
+                "icon": "44.png"
+            },
+            {
+                "id": 560,
+                "name": "Samurai de élite",
+                "internalName": "elite_samurai",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "483.png"
+            }
+        ]
+    },
+    "khmer": {
+        "id": "khmer",
+        "name": "Jemeres",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1120,
+                "name": "Elefante con balista",
+                "internalName": "ballista_elephant",
+                "building": "castle",
+                "age": "castle",
+                "icon": "231.png"
+            },
+            {
+                "id": 1122,
+                "name": "Elefante con balista de élite",
+                "internalName": "elite_ballista_elephant",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "502.png"
+            }
+        ]
+    },
+    "jurchens": {
+        "id": "jurchens",
+        "name": "Jurchen",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 1920,
+                "name": "Granadero",
+                "internalName": "grenadier",
+                "building": "archery_range",
+                "age": "imperial",
+                "icon": "1920.png",
+                "cost": {
+                    "wood": 60,
+                    "gold": 50
+                },
+                "trainTime": 24
+            },
+            {
+                "id": 1908,
+                "name": "Pagoda de hierro",
+                "internalName": "iron_pagoda",
+                "building": "castle",
+                "age": "castle",
+                "icon": "461.png"
+            },
+            {
+                "id": 1910,
+                "name": "Pagoda de hierro de élite",
+                "internalName": "elite_iron_pagoda",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "524.png"
+            }
+        ]
+    },
+    "khitans": {
+        "id": "khitans",
+        "name": "Khitanes",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 1923,
+                "name": "Trebuchet montado",
+                "internalName": "mounted_trebuchet",
+                "building": "siege_workshop",
+                "age": "imperial",
+                "icon": "464.png"
+            },
+            {
+                "id": 1920,
+                "name": "Liao Dao",
+                "internalName": "liao_dao",
+                "building": "castle",
+                "age": "castle",
+                "icon": "463.png"
+            },
+            {
+                "id": 1922,
+                "name": "Liao Dao de élite",
+                "internalName": "elite_liao_dao",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "525.png"
+            }
+        ]
+    },
+    "lithuanians": {
+        "id": "lithuanians",
+        "name": "Lituanos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1707,
+                "name": "Húsar alado",
+                "internalName": "winged_hussar",
+                "building": "stable",
+                "age": "imperial",
+                "icon": "371.png"
+            },
+            {
+                "id": 1234,
+                "name": "Leitis",
+                "internalName": "leitis",
+                "building": "castle",
+                "age": "castle",
+                "icon": "253.png"
+            },
+            {
+                "id": 1236,
+                "name": "Leitis de élite",
+                "internalName": "elite_leitis",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "509.png"
+            }
+        ]
+    },
+    "magyars": {
+        "id": "magyars",
+        "name": "Magiares",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 869,
+                "name": "Huszár magiar",
+                "internalName": "magyar_huszar",
+                "building": "castle",
+                "age": "castle",
+                "icon": "99.png"
+            },
+            {
+                "id": 871,
+                "name": "Huszár magiar de élite",
+                "internalName": "elite_magyar_huszar",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "493.png"
+            }
+        ]
+    },
+    "malay": {
+        "id": "malay",
+        "name": "Malayos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1123,
+                "name": "Recluta con karambit",
+                "internalName": "karambit_warrior",
+                "building": "castle",
+                "age": "castle",
+                "icon": "233.png"
+            },
+            {
+                "id": 1125,
+                "name": "Recluta con karambit de élite",
+                "internalName": "elite_karambit_warrior",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "503.png"
+            }
+        ]
+    },
+    "malians": {
+        "id": "malians",
+        "name": "Malienses",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1013,
+                "name": "Guardiana gbeto",
+                "internalName": "gbeto",
+                "building": "castle",
+                "age": "castle",
+                "icon": "197.png"
+            },
+            {
+                "id": 1015,
+                "name": "Guardiana gbeto de élite",
+                "internalName": "elite_gbeto",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "500.png"
+            }
+        ]
+    },
+    "mapuche": {
+        "id": "mapuche",
+        "name": "Mapuches",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 1901,
+                "name": "Jinete con boleadoras",
+                "internalName": "bolas_rider",
+                "building": "archery_range",
+                "age": "castle",
+                "icon": "1901.png",
+                "cost": {
+                    "food": 55,
+                    "gold": 60
+                },
+                "trainTime": 21
+            },
+            {
+                "id": 1902,
+                "name": "Jinete con boleadoras de élite",
+                "internalName": "elite_bolas_rider",
+                "building": "archery_range",
+                "age": "imperial",
+                "icon": "1901.png",
+                "cost": {
+                    "food": 55,
+                    "gold": 60
+                },
+                "trainTime": 19
+            },
+            {
+                "id": 2566,
+                "name": "Kona",
+                "internalName": "kona",
+                "building": "castle",
+                "age": "castle",
+                "icon": "545.png"
+            },
+            {
+                "id": 2568,
+                "name": "Kona de élite",
+                "internalName": "elite_kona",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "546.png"
+            }
+        ]
+    },
+    "mayans": {
+        "id": "mayans",
+        "name": "Mayas",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 763,
+                "name": "Arquero emplumado",
+                "internalName": "plumed_archer",
+                "building": "castle",
+                "age": "castle",
+                "icon": "108.png"
+            },
+            {
+                "id": 765,
+                "name": "Arquero emplumado de élite",
+                "internalName": "elite_plumed_archer",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "488.png"
+            }
+        ]
+    },
+    "mongols": {
+        "id": "mongols",
+        "name": "Mongoles",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 11,
+                "name": "Mangudai",
+                "internalName": "mangudai",
+                "building": "castle",
+                "age": "castle",
+                "icon": "42.png"
+            },
+            {
+                "id": 561,
+                "name": "Mangudai de élite",
+                "internalName": "elite_mangudai",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "484.png"
+            }
+        ]
+    },
+    "muisca": {
+        "id": "muisca",
+        "name": "Muiscas",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 2586,
+                "name": "Guardia del templo",
+                "internalName": "temple_guard",
+                "building": "barracks",
+                "age": "castle",
+                "icon": "553.png"
+            },
+            {
+                "id": 2587,
+                "name": "Guardia del templo de élite",
+                "internalName": "elite_temple_guard",
+                "building": "barracks",
+                "age": "imperial",
+                "icon": "554.png"
+            },
+            {
+                "id": 2562,
+                "name": "Guerrero guecha",
+                "internalName": "guecha_warrior",
+                "building": "castle",
+                "age": "castle",
+                "icon": "543.png"
+            },
+            {
+                "id": 2564,
+                "name": "Guerrero guecha de élite",
+                "internalName": "elite_guecha_warrior",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "544.png"
+            }
+        ]
+    },
+    "persians": {
+        "id": "persians",
+        "name": "Persas",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1813,
+                "name": "Savar",
+                "internalName": "savar",
+                "building": "stable",
+                "age": "imperial",
+                "icon": "410.png"
+            },
+            {
+                "id": 239,
+                "name": "Elefante de guerra",
+                "internalName": "war_elephant",
+                "building": "castle",
+                "age": "castle",
+                "icon": "43.png"
+            },
+            {
+                "id": 558,
+                "name": "Elefante de guerra de élite",
+                "internalName": "elite_war_elephant",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "481.png"
+            }
+        ]
+    },
+    "poles": {
+        "id": "poles",
+        "name": "Polacos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1707,
+                "name": "Húsar alado",
+                "internalName": "winged_hussar",
+                "building": "stable",
+                "age": "imperial",
+                "icon": "371.png"
+            },
+            {
+                "id": 1701,
+                "name": "Martillo de guerra",
+                "internalName": "obuch",
+                "building": "castle",
+                "age": "castle",
+                "icon": "369.png"
+            },
+            {
+                "id": 1703,
+                "name": "Martillo de guerra de élite",
+                "internalName": "elite_obuch",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "513.png"
+            }
+        ]
+    },
+    "portuguese": {
+        "id": "portuguese",
+        "name": "Portugueses",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1004,
+                "name": "Carabela",
+                "internalName": "caravel",
+                "building": "dock",
+                "age": "castle",
+                "icon": "198.png"
+            },
+            {
+                "id": 1006,
+                "name": "Carabela de élite",
+                "internalName": "elite_caravel",
+                "building": "dock",
+                "age": "imperial",
+                "icon": "497.png"
+            },
+            {
+                "id": 1001,
+                "name": "Cañón de salvas",
+                "internalName": "organ_gun",
+                "building": "castle",
+                "age": "castle",
+                "icon": "190.png"
+            },
+            {
+                "id": 1003,
+                "name": "Cañón de salvas de élite",
+                "internalName": "elite_organ_gun",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "496.png"
+            }
+        ]
+    },
+    "romans": {
+        "id": "romans",
+        "name": "Romanos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1793,
+                "name": "Legionario",
+                "internalName": "legionary",
+                "building": "barracks",
+                "age": "imperial",
+                "icon": "139.png"
+            },
+            {
+                "id": 1790,
+                "name": "Centurión",
+                "internalName": "centurion",
+                "building": "castle",
+                "age": "castle",
+                "icon": "405.png"
+            },
+            {
+                "id": 1792,
+                "name": "Centurión de élite",
+                "internalName": "elite_centurion",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "521.png"
+            }
+        ]
+    },
+    "saxons": {
+        "id": "saxons",
+        "name": "Sajones",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 2705,
+                "name": "Tropas del hogar",
+                "internalName": "hearth_troop",
+                "building": "castle",
+                "age": "castle",
+                "icon": "904.png"
+            },
+            {
+                "id": 2706,
+                "name": "Tropas del hogar de élite",
+                "internalName": "elite_hearth_troop",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "905.png"
+            }
+        ]
+    },
+    "saracens": {
+        "id": "saracens",
+        "name": "Sarracenos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 282,
+                "name": "Mameluco",
+                "internalName": "mameluke",
+                "building": "castle",
+                "age": "castle",
+                "icon": "37.png"
+            },
+            {
+                "id": 556,
+                "name": "Mameluco de élite",
+                "internalName": "elite_mameluke",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "479.png"
+            }
+        ]
+    },
+    "shu": {
+        "id": "shu",
+        "name": "Shu",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 1962,
+                "name": "Carro de guerra",
+                "internalName": "war_chariot",
+                "building": "siege_workshop",
+                "age": "castle",
+                "icon": "435.png"
+            },
+            {
+                "id": 1959,
+                "name": "Guardia de la pluma blanca",
+                "internalName": "white_feather_guard",
+                "building": "castle",
+                "age": "castle",
+                "icon": "434.png"
+            },
+            {
+                "id": 1961,
+                "name": "Guardia de la pluma blanca de élite",
+                "internalName": "elite_white_feather_guard",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "527.png"
+            },
+            {
+                "id": 1966,
+                "name": "Liu Bei",
+                "internalName": "liu_bei",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "466.png"
+            }
+        ]
+    },
+    "sicilians": {
+        "id": "sicilians",
+        "name": "Sicilianos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1658,
+                "name": "Serjeant",
+                "internalName": "serjeant",
+                "building": "castle",
+                "age": "castle",
+                "icon": "356.png"
+            },
+            {
+                "id": 1659,
+                "name": "Serjeant de élite",
+                "internalName": "elite_serjeant",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "512.png"
+            },
+            {
+                "id": 1660,
+                "name": "Serjeant (Torreón)",
+                "internalName": "serjeant_donjon",
+                "building": "donjon",
+                "age": "feudal",
+                "icon": "356.png"
+            },
+            {
+                "id": 1661,
+                "name": "Serjeant de élite (Torreón)",
+                "internalName": "elite_serjeant_donjon",
+                "building": "donjon",
+                "age": "imperial",
+                "icon": "512.png"
+            }
+        ]
+    },
+    "tatars": {
+        "id": "tatars",
+        "name": "Tártaros",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1263,
+                "name": "Camello llameante",
+                "internalName": "flaming_camel",
+                "building": "siege_workshop",
+                "age": "imperial",
+                "icon": "270.png"
+            },
+            {
+                "id": 1228,
+                "name": "Keshik",
+                "internalName": "keshik",
+                "building": "castle",
+                "age": "castle",
+                "icon": "251.png"
+            },
+            {
+                "id": 1230,
+                "name": "Keshik de élite",
+                "internalName": "elite_keshik",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "507.png"
+            }
+        ]
+    },
+    "teutons": {
+        "id": "teutons",
+        "name": "Teutones",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 25,
+                "name": "Caballero teutónico",
+                "internalName": "teutonic_knight",
+                "building": "castle",
+                "age": "castle",
+                "icon": "45.png"
+            },
+            {
+                "id": 554,
+                "name": "Caballero teutónico de élite",
+                "internalName": "elite_teutonic_knight",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "477.png"
+            }
+        ]
+    },
+    "tupi": {
+        "id": "tupi",
+        "name": "Tupís",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 2582,
+                "name": "Guerrero ibirapema",
+                "internalName": "ibirapema_warrior",
+                "building": "barracks",
+                "age": "castle",
+                "icon": "551.png"
+            },
+            {
+                "id": 2584,
+                "name": "Guerrero ibirapema de élite",
+                "internalName": "elite_ibirapema_warrior",
+                "building": "barracks",
+                "age": "imperial",
+                "icon": "552.png"
+            },
+            {
+                "id": 2579,
+                "name": "Arquero de los bosques",
+                "internalName": "blackwood_archer",
+                "building": "castle",
+                "age": "castle",
+                "icon": "549.png"
+            },
+            {
+                "id": 2581,
+                "name": "Arquero de los bosques de élite",
+                "internalName": "elite_blackwood_archer",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "550.png"
+            }
+        ]
+    },
+    "turks": {
+        "id": "turks",
+        "name": "Turcos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 46,
+                "name": "Jenízaro",
+                "internalName": "janissary",
+                "building": "castle",
+                "age": "castle",
+                "icon": "39.png"
+            },
+            {
+                "id": 557,
+                "name": "Jenízaro de élite",
+                "internalName": "elite_janissary",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "480.png"
+            }
+        ]
+    },
+    "varangians": {
+        "id": "varangians",
+        "name": "Varegos",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 2708,
+                "name": "Jarl",
+                "internalName": "jarl",
+                "building": "castle",
+                "age": "castle",
+                "icon": "906.png"
+            },
+            {
+                "id": 2709,
+                "name": "Jarl de élite",
+                "internalName": "elite_jarl",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "907.png"
+            }
+        ]
+    },
+    "vietnamese": {
+        "id": "vietnamese",
+        "name": "Vietnamitas",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 1155,
+                "name": "Hostigador imperial",
+                "internalName": "imperial_skirmisher",
+                "building": "archery_range",
+                "age": "imperial",
+                "icon": "229.png"
+            },
+            {
+                "id": 1129,
+                "name": "Arquero de ratán",
+                "internalName": "rattan_archer",
+                "building": "castle",
+                "age": "castle",
+                "icon": "232.png"
+            },
+            {
+                "id": 1131,
+                "name": "Arquero de ratán de élite",
+                "internalName": "elite_rattan_archer",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "505.png"
+            }
+        ]
+    },
+    "vikings": {
+        "id": "vikings",
+        "name": "Vikingos",
+        "official": true,
+        "uniqueUnits": [
+            {
+                "id": 692,
+                "name": "Berserker",
+                "internalName": "berserk",
+                "building": "castle",
+                "age": "castle",
+                "icon": "38.png"
+            },
+            {
+                "id": 694,
+                "name": "Berserker de élite",
+                "internalName": "elite_berserk",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "485.png"
+            }
+        ]
+    },
+    "wei": {
+        "id": "wei",
+        "name": "Wei",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 1952,
+                "name": "Saqueador xianbei",
+                "internalName": "xianbei_raider",
+                "building": "archery_range",
+                "age": "castle",
+                "icon": "433.png"
+            },
+            {
+                "id": 1949,
+                "name": "Caballería tigresa",
+                "internalName": "tiger_cavalry",
+                "building": "castle",
+                "age": "castle",
+                "icon": "432.png"
+            },
+            {
+                "id": 1951,
+                "name": "Caballería tigresa de élite",
+                "internalName": "elite_tiger_cavalry",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "526.png"
+            },
+            {
+                "id": 1954,
+                "name": "Cao Cao",
+                "internalName": "cao_cao",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "465.png"
+            }
+        ]
+    },
+    "wu": {
+        "id": "wu",
+        "name": "Wu",
+        "official": false,
+        "uniqueUnits": [
+            {
+                "id": 1974,
+                "name": "Espadachín de Jian",
+                "internalName": "jian_swordsman",
+                "building": "barracks",
+                "age": "castle",
+                "icon": "437.png"
+            },
+            {
+                "id": 1968,
+                "name": "Arquero de fuego",
+                "internalName": "fire_archer",
+                "building": "castle",
+                "age": "castle",
+                "icon": "436.png"
+            },
+            {
+                "id": 1970,
+                "name": "Carro de fuego de élite",
+                "internalName": "elite_fire_archer",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "528.png"
+            },
+            {
+                "id": 1978,
+                "name": "Sun Jian",
+                "internalName": "sun_jian",
+                "building": "castle",
+                "age": "imperial",
+                "icon": "467.png"
+            }
+        ]
+    }
+});
+
+  /**
+   * Retorna la lista ordenada con 'Genérico' anclado al inicio (index 0)
+   * y las 56 civilizaciones restantes ordenadas alfabéticamente A-Z en español.
+   */
+  function getSortedCivilizations() {
+    const genericOption = CIVILIZATIONS.find(civ => civ.id === 'generic') || { id: 'generic', name: 'Genérico', official: false };
+    const playable = CIVILIZATIONS.filter(civ => civ.id !== 'generic');
+
+    const sortedCivs = [...playable].sort((a, b) =>
+      a.name.localeCompare(b.name, 'es', { sensitivity: 'base' })
+    );
+
+    return [genericOption, ...sortedCivs];
+  }
+
+  function getCivById(id) {
+    if (!id) return null;
+    const lower = String(id).toLowerCase().trim().replace(/\s+/g, '_');
+    return CIVILIZATIONS.find(c => c.id === lower) || null;
+  }
+
+  function getCivByName(name) {
+    if (!name) return null;
+    const lower = String(name).toLowerCase().trim();
+    return CIVILIZATIONS.find(c => c.name.toLowerCase() === lower || c.id === lower) || null;
+  }
+
+  function getCivilizationData(civId) {
+    if (!civId) return CIVILIZATIONS_DATA['generic'] || null;
+    const lower = String(civId).toLowerCase().trim().replace(/\s+/g, '_');
+    return CIVILIZATIONS_DATA[lower] || CIVILIZATIONS_DATA['generic'] || null;
+  }
+
+  function getUniqueUnitsForCiv(civId) {
+    const data = getCivilizationData(civId);
+    return (data && Array.isArray(data.uniqueUnits)) ? data.uniqueUnits : [];
+  }
+
+  const ALL_CIVILIZATIONS = getSortedCivilizations().map(c => c.name);
+  const PLAYABLE_CIVILIZATIONS = getSortedCivilizations().filter(c => c.id !== 'generic');
+
+  return {
+    CIVILIZATIONS,
+    CIVILIZATIONS_DATA,
+    PLAYABLE_CIVILIZATIONS,
+    ALL_CIVILIZATIONS,
+    getCivById,
+    getCivByName,
+    getCivilizationData,
+    getUniqueUnitsForCiv,
+    getSortedCivilizations
+  };
+});

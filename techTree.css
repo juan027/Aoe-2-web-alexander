@@ -1,0 +1,700 @@
+/**
+ * TECHTREE.CSS - Estilos canónicos del Árbol de Tecnologías estilo SiegeEngineers
+ * Integración con tema medieval de madera, pergamino, biseles de oro y conectores SVG.
+ */
+
+/* =========================================================================
+   CONTENEDOR PRINCIPAL DEL TECH TREE
+   ========================================================================= */
+.techtree-view-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 80px);
+  min-height: 600px;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 8px 12px 12px 12px;
+}
+
+.techtree-layout {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 12px;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* =========================================================================
+   1. PANEL LATERAL IZQUIERDO FIJO (CIV OVERVIEW SIDEBAR)
+   ========================================================================= */
+.techtree-sidebar {
+  flex: 0 0 350px;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(28, 22, 16, 0.97) 0%, rgba(18, 14, 10, 0.98) 100%);
+  border: 2px solid #8d6b38;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 215, 0, 0.2);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.techtree-sidebar-header {
+  padding: 12px 14px 8px 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 2px solid #5a4220;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.techtree-sidebar-top-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.techtree-back-btn {
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.techtree-civ-picker-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.techtree-civ-select {
+  width: 100%;
+  font-size: 0.92rem;
+  padding: 6px 10px;
+  background: #1c150e;
+  color: #f7e6b5;
+  border: 1px solid #7a5a29;
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.techtree-civ-select:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.techtree-sidebar-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Custom scrollbar para sidebar */
+.techtree-sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.techtree-sidebar-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+.techtree-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #5a4220;
+  border-radius: 3px;
+}
+.techtree-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #8d6b38;
+}
+
+/* Cabecera de la civilización (Escudo, Título, Arquetipo) */
+.techtree-civ-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(141, 107, 56, 0.4);
+}
+
+.techtree-civ-crest-frame {
+  width: 68px;
+  height: 68px;
+  flex: 0 0 68px;
+  background: radial-gradient(circle, #2a1f14 0%, #120e0a 100%);
+  border: 2px solid #c8a355;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 0 6px rgba(0, 0, 0, 0.8);
+}
+
+.techtree-civ-crest-img {
+  max-width: 58px;
+  max-height: 58px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.techtree-civ-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.techtree-civ-title {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffdf85;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+  line-height: 1.1;
+}
+
+.techtree-archetype-pill {
+  font-size: 0.78rem;
+  color: #e2cfa2;
+  background: rgba(141, 107, 56, 0.2);
+  border: 1px solid rgba(141, 107, 56, 0.5);
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  font-style: italic;
+  max-width: fit-content;
+}
+
+/* Tarjetas de sección (Bonificaciones, UU, UT, Bono de Equipo) */
+.techtree-section-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid #4a361a;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.techtree-section-card.team-card {
+  border-left: 3px solid #3b82f6;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.techtree-section-title {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffd700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px dashed rgba(141, 107, 56, 0.3);
+  padding-bottom: 4px;
+}
+
+.techtree-bonuses-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.techtree-bonus-item {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: #dedede;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.techtree-bonus-bullet {
+  color: #c8a355;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  flex: 0 0 10px;
+}
+
+.techtree-uu-list,
+.techtree-ut-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.techtree-meta-item {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: #dedede;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.techtree-meta-item strong {
+  color: #fce8a6;
+}
+
+.techtree-team-text {
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: #93c5fd;
+  margin: 0;
+}
+
+/* Indicadores de Ramas al pie del sidebar */
+.techtree-sidebar-footer {
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid #5a4220;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.techtree-jump-header {
+  font-size: 0.75rem;
+  font-family: 'Cinzel', serif;
+  color: #baa27c;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.techtree-quickjump-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.techtree-jump-btn {
+  background: #241a12;
+  border: 1px solid #5a4220;
+  color: #d8c39d;
+  font-size: 0.72rem;
+  padding: 3px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.techtree-jump-btn:hover {
+  background: #3d2a1b;
+  border-color: #ffd700;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* =========================================================================
+   2. LIENZO NAVEGABLE DEL ÁRBOL (TECH TREE CANVAS)
+   ========================================================================= */
+.techtree-main-area {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: #110e0b;
+  border: 2px solid #8d6b38;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+/* Barra superior de herramientas y controles */
+.techtree-top-toolbar {
+  padding: 8px 14px;
+  background: linear-gradient(180deg, #261b12 0%, #16100b 100%);
+  border-bottom: 2px solid #5a4220;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.techtree-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #140d08;
+  border: 1px solid #6c4e25;
+  border-radius: 4px;
+  padding: 4px 8px;
+  max-width: 260px;
+}
+
+.techtree-search-wrap input {
+  background: transparent;
+  border: none;
+  color: #ffdf85;
+  font-size: 0.82rem;
+  width: 100%;
+}
+
+.techtree-search-wrap input:focus {
+  outline: none;
+}
+
+.techtree-zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.techtree-zoom-btn {
+  background: #2b1d12;
+  border: 1px solid #6c4e25;
+  color: #f7e6b5;
+  font-weight: bold;
+  font-size: 0.85rem;
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.techtree-zoom-btn:hover {
+  background: #472f1a;
+  border-color: #ffd700;
+}
+
+.techtree-zoom-label {
+  font-size: 0.78rem;
+  color: #baa27c;
+  min-width: 42px;
+  text-align: center;
+  font-family: monospace;
+}
+
+.techtree-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: #dedede;
+}
+
+.techtree-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.techtree-legend-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid #000;
+}
+.techtree-legend-box.building { background: #b45309; }
+.techtree-legend-box.unit { background: #1e3a8a; }
+.techtree-legend-box.tech { background: #065f46; }
+.techtree-legend-box.disabled { background: #dc2626; }
+
+/* Contenedor desplazable con scroll y arrastre (Pan) */
+.techtree-canvas-wrapper {
+  flex: 1 1 auto;
+  overflow: auto;
+  position: relative;
+  background: #14100c;
+  cursor: grab;
+  user-select: none;
+}
+
+.techtree-canvas-wrapper.is-dragging {
+  cursor: grabbing;
+}
+
+/* Canvas del árbol con escalado */
+.techtree-canvas {
+  position: relative;
+  transform-origin: 0 0;
+  transition: transform 0.12s ease-out;
+  min-width: max-content;
+  min-height: max-content;
+}
+
+/* Columna izquierda fija de las 4 Edades */
+.techtree-age-column {
+  position: sticky;
+  left: 0;
+  top: 0;
+  width: 108px;
+  z-index: 15;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.techtree-age-block {
+  height: 192px; /* 2 filas de 96px */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 6px;
+  border-right: 2px solid #8d6b38;
+  border-bottom: 2px solid #8d6b38;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.techtree-age-block.age-1 {
+  background: linear-gradient(90deg, rgba(46, 32, 20, 0.98) 0%, rgba(30, 20, 12, 0.95) 100%);
+}
+.techtree-age-block.age-2 {
+  background: linear-gradient(90deg, rgba(22, 48, 28, 0.98) 0%, rgba(14, 32, 18, 0.95) 100%);
+}
+.techtree-age-block.age-3 {
+  background: linear-gradient(90deg, rgba(20, 38, 64, 0.98) 0%, rgba(12, 24, 42, 0.95) 100%);
+}
+.techtree-age-block.age-4 {
+  background: linear-gradient(90deg, rgba(64, 20, 20, 0.98) 0%, rgba(42, 12, 12, 0.95) 100%);
+}
+
+.techtree-age-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.techtree-age-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #ffdf85;
+  text-align: center;
+  line-height: 1.15;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* Bandas horizontales de fondo por edad */
+.techtree-age-bg-layers {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.techtree-bg-row {
+  height: 192px;
+  box-sizing: border-box;
+  border-bottom: 2px solid rgba(141, 107, 56, 0.35);
+}
+.techtree-bg-row.row-age-1 { background: rgba(46, 32, 20, 0.22); }
+.techtree-bg-row.row-age-2 { background: rgba(22, 48, 28, 0.18); }
+.techtree-bg-row.row-age-3 { background: rgba(20, 38, 64, 0.18); }
+.techtree-bg-row.row-age-4 { background: rgba(64, 20, 20, 0.18); }
+
+/* Capa SVG de conectores de árbol */
+.techtree-svg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.techtree-link {
+  fill: none;
+  stroke: #cda25b;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.9));
+}
+
+.techtree-link.link-disabled {
+  stroke: rgba(140, 110, 75, 0.35);
+  stroke-dasharray: 4 4;
+}
+
+/* Capa de nodos */
+.techtree-nodes-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 8;
+  pointer-events: auto;
+}
+
+/* Nodos individuales del árbol */
+.techtree-node {
+  position: absolute;
+  width: 72px;
+  height: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  z-index: 8;
+}
+
+.techtree-node:hover {
+  transform: translateY(-2px) scale(1.08);
+  z-index: 25;
+}
+
+.techtree-node:focus-visible {
+  outline: 2px solid #ffd700;
+  border-radius: 4px;
+}
+
+.node-icon-wrapper {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #14100c;
+  border: 2px solid #8d6b38;
+}
+
+/* Variaciones de borde por tipo de nodo */
+.techtree-node.node-building .node-icon-wrapper {
+  border-color: #d4a359;
+  border-radius: 3px;
+}
+
+.techtree-node.node-unit .node-icon-wrapper {
+  border-color: #60a5fa;
+  border-radius: 6px;
+}
+
+.techtree-node.node-tech .node-icon-wrapper {
+  border-color: #34d399;
+  border-radius: 50%;
+}
+
+.techtree-node.node-unique .node-icon-wrapper {
+  border-color: #f59e0b;
+}
+
+.node-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.node-name-label {
+  font-size: 0.68rem;
+  line-height: 1.15;
+  color: #f5e6cc;
+  text-align: center;
+  margin-top: 3px;
+  max-width: 72px;
+  max-height: 28px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 1), 0 0 4px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  font-weight: 500;
+}
+
+/* =========================================================================
+   BLOQUEO VISUAL CANÓNICO (.disabled / .not-available)
+   ========================================================================= */
+.techtree-node.disabled {
+  opacity: 0.65;
+}
+
+.techtree-node.disabled .node-icon {
+  filter: grayscale(85%) brightness(0.6) contrast(0.85);
+}
+
+.techtree-node.disabled .node-icon-wrapper {
+  border-color: #554433;
+}
+
+.techtree-node.disabled .node-name-label {
+  color: #9c9182;
+  text-decoration: line-through;
+  text-decoration-color: rgba(220, 38, 38, 0.8);
+}
+
+/* Aspa roja canónica superpuesta */
+.disabled-cross-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #ef4444;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* =========================================================================
+   ESTADOS DE FILTRADO Y BÚSQUEDA
+   ========================================================================= */
+.techtree-node.highlighted {
+  z-index: 30;
+  transform: scale(1.15);
+}
+
+.techtree-node.highlighted .node-icon-wrapper {
+  border-color: #ffd700;
+  box-shadow: 0 0 14px #ffd700, 0 0 24px rgba(255, 215, 0, 0.6);
+}
+
+.techtree-node.dimmed {
+  opacity: 0.15;
+  filter: grayscale(100%);
+}
+
+/* =========================================================================
+   RESPONSIVIDAD Y AJUSTES MÓVILES
+   ========================================================================= */
+@media (max-width: 1024px) {
+  .techtree-layout {
+    flex-direction: column;
+  }
+  .techtree-sidebar {
+    flex: 0 0 auto;
+    max-width: 100%;
+    max-height: 280px;
+  }
+  .techtree-view-wrapper {
+    height: auto;
+    min-height: calc(100vh - 80px);
+  }
+}

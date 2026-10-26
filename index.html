@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age of Empires II: Base de Datos & Calculadora Competitiva</title>
+  
+  <!-- Tipografía medieval con soporte moderno -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cinzel+Decorative:wght@700&family=MedievalSharp&family=Metamorphous&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./wood-theme.css">
+  <link rel="stylesheet" href="./techTree.css">
+  <link rel="stylesheet" href="./ecoCalculator.css">
+</head>
+<body class="wood-bg">
+
+  <!-- Encabezado Principal Medieval -->
+  <header class="medieval-header bevel-raised">
+    <!-- Insignia del Canal -->
+    <a href="https://www.youtube.com/@alexander627-e9y" target="_blank" rel="noopener noreferrer" class="channel-badge" title="Alexander el sabio">
+      <img src="./img/logo.png" alt="Alexander el sabio">
+    </a>
+
+    <div class="header-inner">
+      <div class="header-crest">
+        <span class="crest-shield">⚔️</span>
+      </div>
+      <div class="header-titles">
+        <h1 class="game-title">AGE OF EMPIRES II</h1>
+        <p class="game-subtitle">Base de Datos Interactiva & Calculadora Competitiva</p>
+      </div>
+      <div class="header-meta">
+        <span class="version-badge">Esquema Definitive Edition</span>
+        <button id="nav-home-btn" class="wood-btn wood-btn-sm" title="Volver al Menú Principal" style="display: none;">
+          🏛️ Menú Principal
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal de Vistas -->
+  <main class="app-container">
+
+    <!-- ESTADO DE CARGA GLOBAL -->
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="parchment-card loading-box bevel-raised">
+        <div class="siege-spinner"></div>
+        <h2 class="medieval-title">Cargando Archivos del Reino...</h2>
+        <p id="loading-status" class="loading-status">Leyendo data.json y traducciones en español...</p>
+      </div>
+    </div>
+
+    <!-- 1. VISTA: MENÚ PRINCIPAL (TABLERO MEDIEVAL DE MADERA) -->
+    <section id="main-menu-view" class="view-section active">
+      <div class="wood-board bevel-raised">
+        <!-- Esquinas metálicas decorativas -->
+        <div class="brass-corner top-left"></div>
+        <div class="brass-corner top-right"></div>
+        <div class="brass-corner bottom-left"></div>
+        <div class="brass-corner bottom-right"></div>
+
+        <div class="board-header">
+          <div class="header-ribbon wood-banner">
+            <span class="ribbon-tail left"></span>
+            <h2 class="board-title">Tablero Táctico de Mando</h2>
+            <span class="ribbon-tail right"></span>
+          </div>
+          <p class="board-tagline">Selecciona un módulo para explorar estadísticas, árboles tecnológicos y herramientas de combate.</p>
+        </div>
+
+        <!-- Cuadrícula de Botones Biselados de Madera (3 Columnas) -->
+        <div class="wood-menu-grid">
+          
+          <!-- 1. Unidades (Activo para esta fase) -->
+          <button class="wood-plank-btn active-module" data-action="open-units">
+            <div class="btn-rivet top-left"></div>
+            <div class="btn-rivet top-right"></div>
+            <div class="btn-rivet bottom-left"></div>
+            <div class="btn-rivet bottom-right"></div>
+            <div class="plank-icon-box">
+              <span class="plank-icon">🗡️</span>
+            </div>
+            <div class="plank-content">
+              <span class="plank-title">Unidades</span>
+              <span class="plank-desc">Estadísticas base, costes y desglose de armaduras ocultas.</span>
+              <span class="module-status badge-ready">Disponible • 255 Unidades</span>
+            </div>
+            <span class="arrow-indicator">➔</span>
+          </button>
+
+          <!-- 2. Edificios -->
+          <button class="wood-plank-btn plaque-purple active-module" data-action="open-buildings">
+            <div class="btn-rivet top-left"></div>
+            <div class="btn-rivet top-right"></div>
+            <div class="btn-rivet bottom-left"></div>
+            <div class="btn-rivet bottom-right"></div>
+            <div class="plank-icon-box">
+              <span class="plank-icon">🏰</span>
+            </div>
+            <div class="plank-content">
+              <span class="plank-title">Edificios</span>
+              <span class="plank-desc">Puntos de impacto, guarnición, alcance y defensas.</span>
+              <span class="module-status badge-ready">Disponible • 39 Edificios</span>
+            </div>
+            <span class="arrow-indicator">➔</span>
+          </button>
+
+          <!-- 3. Tecnologías -->
+          <button class="wood-plank-btn active-module" data-action="open-techs">
+            <div class="btn-rivet top-left"></div>
+            <div class="btn-rivet top-right"></div>
+            <div class="btn-rivet bottom-left"></div>
+            <div class="btn-rivet bottom-right"></div>
+            <div class="plank-icon-box">
+              <span class="plank-icon">📜</span>
+            </div>
+            <div class="plank-content">
+              <span class="plank-title">Tecnologías</span>
+              <span class="plank-desc">Mejoras de herrería, economía, universidad, monasterio, muelle y coronas.</span>
+              <span class="module-status badge-ready">Disponible • 199 Tecnologías</span>
+            </div>
+            <span class="arrow-indicator">➔</span>
+          </button>
+
+          <!-- 4. Tech Tree -->
+          <button class="wood-plank-btn active-module" data-action="open-techtree">
+            <div class="btn-rivet top-left"></div>
+            <div class="btn-rivet top-right"></div>
+            <div class="btn-rivet bottom-left"></div>
+            <div class="btn-rivet bottom-right"></div>
+            <div class="plank-icon-box">
+              <span class="plank-icon">🌳</span>
+            </div>
+            <div class="plank-content">
+              <span class="plank-title">Tech Tree</span>
+              <span class="plank-desc">Diagrama de árbol tecnológico dinámico canónico para las 56 civilizaciones.</span>
+              <span class="module-status badge-ready">Disponible • 56 Civilizaciones</span>
+            </div>
+            <span class="arrow-indicator">➔</span>
+          </button>
+
+          <!-- 5. Duelo 1 vs 1 -->
+          <button class="wood-plank-btn plaque-purple active-module" data-action="open-duel">
+            <div class="btn-rivet top-left"></div>
+            <div class="btn-rivet top-right"></div>
+            <div class="btn-rivet bottom-left"></div>
+            <div class="btn-rivet bottom-right"></div>
+            <div class="plank-icon-box">
+              <span class="plank-icon">⚔️</span>
+            </div>
+            <div class="plank-content">
+              <span class="plank-title">Duelo 1 vs 1</span>
+              <span class="plank-desc">Simulador de combate directo, daño por golpe y cálculo de DPS.</span>
+              <span class="module-status badge-ready">Disponible • Arena 1 vs 1</span>
+            </div>
+            <span class="arrow-indicator">➔</span>
+          </button>
+
+          <!-- 6. Calculadora Eco -->
+          <button class="wood-plank-btn active-module" data-action="open-eco">
+            <div class="btn-rivet top-left"></div>
+            <div class="btn-rivet top-right"></div>
+            <div class="btn-rivet bottom-left"></div>
+            <div class="btn-rivet bottom-right"></div>
+            <div class="plank-icon-box">
+              <span class="plank-icon">🪙</span>
+            </div>
+            <div class="plank-content">
+              <span class="plank-title">Calculadora Eco</span>
+              <span class="plank-desc">Cálculo de aldeanos óptimos, resiembra de granjas y tiempo de trabajo (VT).</span>
+              <span class="module-status badge-ready">Disponible • Simulación Eco</span>
+            </div>
+            <span class="arrow-indicator">➔</span>
+          </button>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. VISTA: UNIDADES (CATÁLOGO + BUSCADOR + INSPECTOR LATERAL) -->
+    <section id="units-view" class="view-section">
+      
+      <!-- Barra Superior de Control y Filtros -->
+      <div class="wood-filter-board bevel-raised">
+        <div class="filter-top-row">
+          <button id="back-to-menu-btn" class="wood-btn">
+            ❮ Volver al Menú
+          </button>
+          
+          <div class="search-box-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="unit-search-input" class="medieval-input" placeholder="Buscar por nombre (ej. Paladín, Mangudai, Arquero)..." autocomplete="off">
+            <button id="clear-search-btn" class="clear-btn" title="Limpiar búsqueda" style="display:none;">✕</button>
+          </div>
+
+          <div class="civ-filter-wrapper">
+            <label for="civ-select" class="medieval-label">Civilización:</label>
+            <select id="civ-select" class="medieval-select">
+              <option value="all">🏛️ Todas las Civilizaciones</option>
+              <!-- Las opciones de civilización se inyectarán dinámicamente -->
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-bottom-row">
+          <!-- Selector de Edades -->
+          <div class="age-selector-group">
+            <span class="filter-group-label">Edad:</span>
+            <button class="age-btn active" data-age="all">Todas</button>
+            <button class="age-btn" data-age="1" title="Alta Edad Media">
+              <span class="age-pip age-1"></span> Alta Edad Media
+            </button>
+            <button class="age-btn" data-age="2" title="Edad Feudal">
+              <span class="age-pip age-2"></span> Feudal
+            </button>
+            <button class="age-btn" data-age="3" title="Edad de los Castillos">
+              <span class="age-pip age-3"></span> Castillos
+            </button>
+            <button class="age-btn" data-age="4" title="Edad Imperial">
+              <span class="age-pip age-4"></span> Imperial
+            </button>
+          </div>
+
+          <!-- Opciones Adicionales y Contador -->
+          <div class="filter-meta-controls">
+            <label class="wood-checkbox-label">
+              <input type="checkbox" id="hide-disabled-units">
+              <span class="custom-checkbox"></span>
+              <span>Ocultar unidades no disponibles</span>
+            </label>
+
+            <span id="units-count-display" class="units-count-tag">
+              Cargando unidades...
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Área de Contenido Principal: Cuadrícula + Inspector Lateral -->
+      <div class="units-layout">
+        
+        <!-- Cuadrícula de Unidades -->
+        <div class="units-grid-container">
+          <div id="units-grid" class="units-grid">
+            <!-- Las tarjetas de unidades se renderizan dinámicamente con app.js -->
+          </div>
+          
+          <div id="no-results-msg" class="empty-state parchment-card bevel-inset" style="display: none;">
+            <span class="empty-icon">🛡️</span>
+            <h3>No se encontraron unidades</h3>
+            <p>Intenta ajustar el texto de búsqueda o cambia la civilización o edad seleccionada.</p>
+          </div>
+        </div>
+
+        <!-- Panel de Inspección Lateral -->
+        <aside id="inspector-panel" class="inspector-panel bevel-raised">
+          
+          <div class="panel-header-bar">
+            <h3 class="panel-main-title">⚔️ Inspección de Unidad</h3>
+            <button id="close-inspector-mobile" class="close-panel-btn" title="Cerrar panel">✕</button>
+          </div>
+
+          <div id="inspector-content" class="inspector-body">
+            <!-- Estado Inicial Vacío -->
+            <div class="inspector-placeholder">
+              <div class="placeholder-shield">🛡️</div>
+              <h4 class="placeholder-title">Ninguna Unidad Seleccionada</h4>
+              <p class="placeholder-text">Haz clic en cualquier unidad de la lista para inspeccionar sus estadísticas de combate, costes y el desglose de armaduras ocultas.</p>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- 3. VISTA: EDIFICIOS (CATÁLOGO ARQUITECTÓNICO + BUSCADOR + MODAL DEEP DIVE) -->
+    <section id="buildings-view" class="view-section">
+      <!-- Barra Superior de Control y Filtros -->
+      <div class="wood-filter-board bevel-raised">
+        <div class="filter-top-row">
+          <button id="buildings-back-to-menu-btn" class="wood-btn">
+            ❮ Volver al Menú
+          </button>
+          
+          <div class="search-box-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="building-search-input" class="medieval-input" placeholder="Buscar por nombre (ej. Castillo, Centro Urbano, Muelle)..." autocomplete="off">
+            <button id="clear-building-search-btn" class="clear-btn" title="Limpiar búsqueda" style="display:none;">✕</button>
+          </div>
+
+          <div class="civ-filter-wrapper">
+            <label for="building-civ-select-catalog" class="medieval-label">Civilización:</label>
+            <select id="building-civ-select-catalog" class="medieval-select">
+              <option value="all">🏛️ Todas las Civilizaciones</option>
+              <!-- Opciones inyectadas dinámicamente -->
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-bottom-row" style="flex-wrap: wrap; gap: 14px; align-items: center;">
+          <!-- Selector de Categorías Arquitectónicas -->
+          <div class="age-selector-group">
+            <span class="filter-group-label">Categoría:</span>
+            <button class="age-btn building-cat-btn active" data-building-cat="all">Todos</button>
+            <button class="age-btn building-cat-btn" data-building-cat="military">⚔️ Militar</button>
+            <button class="age-btn building-cat-btn" data-building-cat="defensive">🛡️ Defensivo</button>
+            <button class="age-btn building-cat-btn" data-building-cat="economic">🌾 Económico</button>
+            <button class="age-btn building-cat-btn" data-building-cat="religious_academic">📜 Religioso / Académico</button>
+          </div>
+
+          <!-- Selector de Edades -->
+          <div class="age-selector-group">
+            <span class="filter-group-label">Edad:</span>
+            <button class="age-btn building-age-btn active" data-building-age="all">Todas</button>
+            <button class="age-btn building-age-btn" data-building-age="1" title="Alta Edad Media">
+              <span class="age-pip age-1"></span> Alta Edad Media
+            </button>
+            <button class="age-btn building-age-btn" data-building-age="2" title="Edad Feudal">
+              <span class="age-pip age-2"></span> Feudal
+            </button>
+            <button class="age-btn building-age-btn" data-building-age="3" title="Edad de los Castillos">
+              <span class="age-pip age-3"></span> Castillos
+            </button>
+            <button class="age-btn building-age-btn" data-building-age="4" title="Edad Imperial">
+              <span class="age-pip age-4"></span> Imperial
+            </button>
+          </div>
+
+          <!-- Contador de Edificios -->
+          <div class="filter-meta-controls">
+            <span id="buildings-count-display" class="units-count-tag">
+              Cargando catálogo arquitectónico...
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cuadrícula de Edificios -->
+      <div class="units-layout" style="display: block;">
+        <div class="units-grid-container" style="width: 100%;">
+          <div id="buildings-grid" class="units-grid">
+            <!-- Las tarjetas de edificios se renderizan dinámicamente con app.js -->
+          </div>
+          
+          <div id="no-buildings-msg" class="empty-state parchment-card bevel-inset" style="display: none;">
+            <span class="empty-icon">🏰</span>
+            <h3>No se encontraron edificios</h3>
+            <p>Intenta ajustar el texto de búsqueda o cambia la categoría, edad o civilización seleccionada.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. VISTA: TECNOLOGÍAS (CATÁLOGO DINÁMICO + BUSCADOR + MODAL DEEP DIVE) -->
+    <section id="techs-view" class="view-section">
+      <!-- Barra Superior de Control y Filtros -->
+      <div class="wood-filter-board bevel-raised">
+        <div class="filter-top-row">
+          <button id="techs-back-to-menu-btn" class="wood-btn">
+            ❮ Volver al Menú
+          </button>
+          
+          <div class="search-box-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="tech-search-input" class="medieval-input" placeholder="Buscar tecnología por nombre (ej. Balística, Telar, Collera, Forja)..." autocomplete="off">
+            <button id="clear-tech-search-btn" class="clear-btn" title="Limpiar búsqueda" style="display:none;">✕</button>
+          </div>
+
+          <div class="civ-filter-wrapper">
+            <label for="tech-civ-select-catalog" class="medieval-label">Civilización:</label>
+            <select id="tech-civ-select-catalog" class="medieval-select">
+              <option value="all">🏛️ Todas las Civilizaciones</option>
+              <!-- Opciones inyectadas dinámicamente -->
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-bottom-row" style="flex-wrap: wrap; gap: 14px; align-items: center;">
+          <!-- Selector de Categorías -->
+          <div class="age-selector-group">
+            <span class="filter-group-label">Categoría:</span>
+            <button class="age-btn tech-cat-btn active" data-tech-cat="all">Todas</button>
+            <button class="age-btn tech-cat-btn" data-tech-cat="economic">🌾 Económicas</button>
+            <button class="age-btn tech-cat-btn" data-tech-cat="blacksmith">⚒️ Herrería</button>
+            <button class="age-btn tech-cat-btn" data-tech-cat="military_support">🛡️ Militar</button>
+            <button class="age-btn tech-cat-btn" data-tech-cat="monastery">📜 Monasterio</button>
+            <button class="age-btn tech-cat-btn" data-tech-cat="university">🏛️ Universidad</button>
+            <button class="age-btn tech-cat-btn" data-tech-cat="dock">⚓ Muelle</button>
+            <button class="age-btn tech-cat-btn" data-tech-cat="unique_crown">👑 Coronas Únicas</button>
+          </div>
+
+          <!-- Selector de Edades -->
+          <div class="age-selector-group">
+            <span class="filter-group-label">Edad:</span>
+            <button class="age-btn tech-age-btn active" data-tech-age="all">Todas</button>
+            <button class="age-btn tech-age-btn" data-tech-age="1" title="Alta Edad Media">
+              <span class="age-pip age-1"></span> Alta Edad Media
+            </button>
+            <button class="age-btn tech-age-btn" data-tech-age="2" title="Edad Feudal">
+              <span class="age-pip age-2"></span> Feudal
+            </button>
+            <button class="age-btn tech-age-btn" data-tech-age="3" title="Edad de los Castillos">
+              <span class="age-pip age-3"></span> Castillos
+            </button>
+            <button class="age-btn tech-age-btn" data-tech-age="4" title="Edad Imperial">
+              <span class="age-pip age-4"></span> Imperial
+            </button>
+          </div>
+
+          <!-- Contador de Tecnologías -->
+          <div class="filter-meta-controls">
+            <span id="techs-count-display" class="units-count-tag">
+              Cargando catálogo tecnológico...
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cuadrícula de Tecnologías -->
+      <div class="units-layout" style="display: block;">
+        <div class="units-grid-container" style="width: 100%;">
+          <div id="techs-grid" class="units-grid">
+            <!-- Las tarjetas de tecnologías se renderizan dinámicamente con techCatalog.js -->
+          </div>
+          
+          <div id="no-techs-msg" class="empty-state parchment-card bevel-inset" style="display: none;">
+            <span class="empty-icon">📜</span>
+            <h3>No se encontraron tecnologías</h3>
+            <p>Intenta ajustar el texto de búsqueda o cambia la categoría, edad o civilización seleccionada.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. VISTA: ÁRBOL DE TECNOLOGÍAS (TECH TREE) -->
+    <section id="techtree-view" class="view-section">
+      <div class="techtree-view-wrapper">
+        <div class="techtree-layout">
+          
+          <!-- Panel Lateral Izquierdo Fijo (Civ Overview Sidebar) -->
+          <aside class="techtree-sidebar">
+            <div class="techtree-sidebar-header">
+              <div class="techtree-sidebar-top-actions">
+                <button id="techtree-back-to-menu-btn" class="wood-btn techtree-back-btn">
+                  ❮ Menú
+                </button>
+                <span style="font-family: 'Cinzel', serif; font-size: 0.85rem; color: #ffd700; font-weight: bold;">
+                  Árbol Tecnológico
+                </span>
+              </div>
+              <div class="techtree-civ-picker-wrap">
+                <select id="techtree-civ-select" class="techtree-civ-select">
+                  <!-- Opciones de civilizaciones inyectadas dinámicamente -->
+                </select>
+              </div>
+            </div>
+
+            <div id="techtree-sidebar-content" class="techtree-sidebar-scroll">
+              <!-- Renderizado dinámico de perfil, bonificaciones, UU, UT y Bono de Equipo -->
+            </div>
+
+            <!-- Indicadores de ramas al pie -->
+            <div class="techtree-sidebar-footer">
+              <p class="techtree-jump-header">Navegación Rápida de Ramas:</p>
+              <div class="techtree-quickjump-grid">
+                <button class="techtree-jump-btn" data-jump-branch="archery" title="Galería de Tiro con Arco">🏹 Arquería</button>
+                <button class="techtree-jump-btn" data-jump-branch="barracks" title="Cuarteles">🛡️ Cuartel</button>
+                <button class="techtree-jump-btn" data-jump-branch="stable" title="Establos">🐎 Establo</button>
+                <button class="techtree-jump-btn" data-jump-branch="siege" title="Taller de Maquinaria de Asedio">💥 Asedio</button>
+                <button class="techtree-jump-btn" data-jump-branch="blacksmith" title="Herrería">⚒️ Herrería</button>
+                <button class="techtree-jump-btn" data-jump-branch="dock" title="Muelles y Naves">⚓ Muelle</button>
+                <button class="techtree-jump-btn" data-jump-branch="university" title="Universidad y Balística">🏛️ Universidad</button>
+                <button class="techtree-jump-btn" data-jump-branch="towers" title="Torres y Muros Defensivos">🗼 Torres/Muros</button>
+                <button class="techtree-jump-btn" data-jump-branch="castle" title="Castillo y Tecnologías Únicas">🏰 Castillo</button>
+                <button class="techtree-jump-btn" data-jump-branch="monastery" title="Monasterio y Reliquias">⛪ Monasterio</button>
+                <button class="techtree-jump-btn" data-jump-branch="economy" title="Centros Urbanos y Economía">🌾 Economía</button>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Lienzo Navegable del Árbol (Tech Tree Canvas) -->
+          <main class="techtree-main-area">
+            <!-- Barra superior de controles del lienzo -->
+            <div class="techtree-top-toolbar">
+              <div class="techtree-search-wrap">
+                <span>🔍</span>
+                <input type="text" id="techtree-search-input" placeholder="Buscar unidad, edificio o tecnología..." autocomplete="off">
+              </div>
+
+              <div class="techtree-legend">
+                <span class="techtree-legend-item"><span class="techtree-legend-box building"></span> Edificio</span>
+                <span class="techtree-legend-item"><span class="techtree-legend-box unit"></span> Unidad</span>
+                <span class="techtree-legend-item"><span class="techtree-legend-box tech"></span> Tecnología</span>
+                <span class="techtree-legend-item"><span class="techtree-legend-box disabled"></span> Bloqueado (✕)</span>
+              </div>
+
+              <div class="techtree-zoom-controls">
+                <button id="techtree-zoom-out" class="techtree-zoom-btn" title="Alejar">-</button>
+                <span id="techtree-zoom-value" class="techtree-zoom-label">100%</span>
+                <button id="techtree-zoom-in" class="techtree-zoom-btn" title="Acercar">+</button>
+                <button id="techtree-zoom-reset" class="techtree-zoom-btn" title="Restablecer tamaño">Reset</button>
+              </div>
+            </div>
+
+            <!-- Contenedor desplazable con soporte de arrastre (Pan) -->
+            <div id="techtree-canvas-wrapper" class="techtree-canvas-wrapper">
+              <div id="techtree-canvas" class="techtree-canvas">
+                
+                <!-- Columna Fija de las 4 Edades -->
+                <div class="techtree-age-column">
+                  <div class="techtree-age-block age-1">
+                    <img src="./img/Ages/base_dark_age.png" alt="Dark Age" class="techtree-age-icon">
+                    <span class="techtree-age-title">Alta Edad Media</span>
+                  </div>
+                  <div class="techtree-age-block age-2">
+                    <img src="./img/Ages/base_feudal_age.png" alt="Feudal Age" class="techtree-age-icon">
+                    <span class="techtree-age-title">Edad Feudal</span>
+                  </div>
+                  <div class="techtree-age-block age-3">
+                    <img src="./img/Ages/base_castle_age.png" alt="Castle Age" class="techtree-age-icon">
+                    <span class="techtree-age-title">Edad Castillos</span>
+                  </div>
+                  <div class="techtree-age-block age-4">
+                    <img src="./img/Ages/base_imperial_age.png" alt="Imperial Age" class="techtree-age-icon">
+                    <span class="techtree-age-title">Edad Imperial</span>
+                  </div>
+                </div>
+
+                <!-- Capas de Fondo por Edad -->
+                <div id="techtree-bg-layers" class="techtree-age-bg-layers">
+                  <div class="techtree-bg-row row-age-1"></div>
+                  <div class="techtree-bg-row row-age-2"></div>
+                  <div class="techtree-bg-row row-age-3"></div>
+                  <div class="techtree-bg-row row-age-4"></div>
+                </div>
+
+                <!-- Capa SVG para líneas conectoras de prerrequisito -->
+                <svg id="techtree-svg-layer" class="techtree-svg-layer"></svg>
+
+                <!-- Capa de Nodos interactivos -->
+                <div id="techtree-nodes-layer" class="techtree-nodes-layer"></div>
+
+              </div>
+            </div>
+          </main>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. VISTA: ARENA DE DUELO 1 VS 1 -->
+    <section id="duel-view" class="view-section">
+      <!-- Barra Superior de Control del Duelo -->
+      <div class="duel-header-board bevel-raised">
+        <button id="duel-back-to-menu-btn" class="wood-btn">
+          ❮ Volver al Menú
+        </button>
+        <div class="duel-header-titles">
+          <h2 class="duel-main-title">⚔️ Arena de Duelo 1 vs 1</h2>
+          <p class="duel-sub-title">Simulador de combate continuo, cálculo impacto a impacto y DPS competitivo</p>
+        </div>
+      </div>
+
+      <!-- Disposición Principal de la Arena: Combatiente A | Mando Central | Combatiente B -->
+      <div class="duel-arena-layout">
+        
+        <!-- COMBATIENTE A (AZUL) -->
+        <div id="combatant1" class="fighter-panel fighter-a combatant-left bevel-raised">
+          <div class="fighter-badge-banner">
+            <span>🛡️</span>
+            <span>Combatiente I (Azul)</span>
+          </div>
+
+          <div class="fighter-select-group">
+            <label for="duel-civ-a" class="fighter-label">Civilización:</label>
+            <select id="duel-civ-a" class="medieval-select tactic-select">
+              <!-- Inyectado dinámicamente -->
+            </select>
+          </div>
+
+          <div class="fighter-select-group">
+            <label for="duel-age-a" class="fighter-label">Edad del Combatiente:</label>
+            <select id="duel-age-a" class="medieval-select tactic-select age-selector" data-side="a">
+              <option value="1">Alta Edad Media</option>
+              <option value="2">Edad Feudal</option>
+              <option value="3">Edad de los Castillos</option>
+              <option value="4" selected>Edad Imperial</option>
+            </select>
+          </div>
+
+          <div class="fighter-select-group">
+            <label for="duel-unit-a" class="fighter-label">Unidad Militar:</label>
+            <select id="duel-unit-a" class="medieval-select tactic-select">
+              <!-- Inyectado dinámicamente -->
+            </select>
+          </div>
+
+          <!-- Tarjeta de la Unidad A -->
+          <div class="fighter-unit-card bevel-inset">
+            <div class="fighter-portrait-row">
+              <div class="fighter-portrait-box">
+                <img id="duel-img-a" class="fighter-portrait-img" src="./img/units/569.png" alt="Unidad A">
+                <span id="duel-img-fallback-a" class="fighter-img-fallback" style="display:none;">🛡️</span>
+              </div>
+              <div class="fighter-name-box">
+                <h4 id="duel-name-a" class="fighter-unit-name">Cargando...</h4>
+                <span id="duel-meta-a" class="fighter-unit-meta">-</span>
+              </div>
+            </div>
+
+            <!-- Coste Militar Dinámico A (Azul) -->
+            <div class="combatant-cost-container" id="combatant-cost-azul" data-side="a">
+              <!-- Se inyectarán dinámicamente los badges de recursos -->
+            </div>
+
+            <!-- Barra de HP A -->
+            <div class="fighter-hp-container">
+              <div class="fighter-hp-header">
+                <span>Puntos de Vida:</span>
+                <span id="duel-hp-text-a" class="hp-label">0 / 0</span>
+              </div>
+              <div class="fighter-hp-bar">
+                <div id="duel-hp-fill-a" class="fighter-hp-fill hp-bar-fill" style="width: 100%;"></div>
+                <span id="duel-hp-bar-text-a" class="fighter-hp-bar-text">100%</span>
+              </div>
+            </div>
+
+            <!-- Atributos Clave A -->
+            <div class="fighter-stats-grid">
+              <div class="stat-chip">
+                <span class="stat-chip-label">Ataque</span>
+                <span id="duel-stat-atk-a" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Arm. Melee</span>
+                <span id="duel-stat-melee-a" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Arm. Pierce</span>
+                <span id="duel-stat-pierce-a" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Cadencia</span>
+                <span id="duel-stat-reload-a" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Rango</span>
+                <span id="duel-stat-range-a" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Velocidad</span>
+                <span id="duel-stat-speed-a" class="stat-chip-val">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modificadores Tácticos A -->
+          <div class="tactics-box bevel-inset">
+            <h4 class="tactics-box-title">⚙️ Modificadores & Mejoras</h4>
+
+            <!-- Elevación A -->
+            <div class="tactic-row">
+              <div class="tactic-header-inline">
+                <label for="duel-elev-a" class="fighter-label">Elevación / Terreno:</label>
+              </div>
+              <select id="duel-elev-a" class="medieval-select tactic-select elevation-selector" data-side="a">
+                <option value="flat" selected>Terreno Plano (Neutro)</option>
+                <option value="high">Colina Arriba (+25% Daño / +50% Tártaros)</option>
+                <option value="low">Colina Abajo (-25% Daño infligido)</option>
+              </select>
+            </div>
+
+            <!-- Stacks Slider A (0-4) -->
+            <div class="tactic-row">
+              <div class="tactic-header-inline">
+                <label for="duel-stacks-a" class="fighter-label">Acumulaciones / Reliquias (0-4):</label>
+                <span id="duel-stacks-val-a" class="tactic-badge-val">0</span>
+              </div>
+              <input type="range" id="duel-stacks-a" class="medieval-slider" min="0" max="4" value="0">
+              <span id="duel-stacks-meta-a" class="fighter-unit-meta">Lituanos (Reliquias) • Jaguar (+1 Atk) • Tigresa (+10 HP / +1 Atk)</span>
+            </div>
+
+            <!-- Contenedor de Herrería A (Aplica a Unidades Terrestres y Navales según su Familia) -->
+            <div id="blacksmith-upgrades-container-a" class="blacksmith-upgrades-container">
+              <!-- Herrería Melee A -->
+              <div class="tactic-row" id="duel-smith-melee-row-a">
+                <div class="tactic-header-inline">
+                  <label for="duel-smith-melee-a" class="fighter-label">Herrería Melee:</label>
+                </div>
+                <select id="duel-smith-melee-a" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin mejoras (+0)</option>
+                  <option value="1" data-tech-id="67" data-min-age="2">Forja (+1)</option>
+                  <option value="2" data-tech-id="68" data-min-age="3">Fundición de hierro (+2)</option>
+                  <option value="3" data-tech-id="75" data-min-age="4" selected>Alto horno (+4)</option>
+                </select>
+              </div>
+
+              <!-- Herrería Flechas A -->
+              <div class="tactic-row" id="duel-smith-pierce-row-a">
+                <div class="tactic-header-inline">
+                  <label for="duel-smith-pierce-a" class="fighter-label">Herrería Flechas:</label>
+                </div>
+                <select id="duel-smith-pierce-a" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin mejoras (+0)</option>
+                  <option value="1" data-tech-id="199" data-min-age="2">Flecha pedernal (+1)</option>
+                  <option value="2" data-tech-id="200" data-min-age="3">Punzón (+2)</option>
+                  <option value="3" data-tech-id="201" data-min-age="4" selected>Braserío (+3)</option>
+                </select>
+              </div>
+
+              <!-- Armadura Infantería A -->
+              <div class="tactic-row" id="duel-armor-row-a">
+                <div class="tactic-header-inline">
+                  <label for="duel-armor-a" class="fighter-label">Armadura Infantería:</label>
+                </div>
+                <select id="duel-armor-a" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin armadura (+0/+0)</option>
+                  <option value="1" data-tech-id="74" data-min-age="2">Escamas (+1/+1)</option>
+                  <option value="2" data-tech-id="76" data-min-age="3">Malla (+2/+2)</option>
+                  <option value="3" data-tech-id="77" data-min-age="4" selected>Placas (+3/+4)</option>
+                </select>
+              </div>
+
+              <!-- Armadura Caballería A -->
+              <div class="tactic-row" id="duel-armor-cav-row-a">
+                <div class="tactic-header-inline">
+                  <label for="duel-armor-cav-a" class="fighter-label">Armadura Caballería:</label>
+                </div>
+                <select id="duel-armor-cav-a" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin armadura (+0/+0)</option>
+                  <option value="1" data-tech-id="81" data-min-age="2">Barda escamas (+1/+1)</option>
+                  <option value="2" data-tech-id="82" data-min-age="3">Barda malla (+2/+2)</option>
+                  <option value="3" data-tech-id="80" data-min-age="4" selected>Barda placas (+3/+4)</option>
+                </select>
+              </div>
+
+              <!-- Armadura Arqueros A -->
+              <div class="tactic-row" id="duel-armor-arch-row-a">
+                <div class="tactic-header-inline">
+                  <label for="duel-armor-arch-a" class="fighter-label">Armadura Arqueros:</label>
+                </div>
+                <select id="duel-armor-arch-a" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin armadura (+0/+0)</option>
+                  <option value="1" data-tech-id="211" data-min-age="2">Armadura acolchada (+1/+1)</option>
+                  <option value="2" data-tech-id="212" data-min-age="3">Armadura de cuero (+2/+2)</option>
+                  <option value="3" data-tech-id="219" data-min-age="4" selected>Armadura de anillas (+3/+4)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Contenedor de Tecnologías Terrestres A (Visible solo para Unidades Terrestres) -->
+            <div id="land-upgrades-container-a" class="land-upgrades-container">
+              <!-- Checkboxes Generales, Movilidad y Arquería Avanzada A -->
+              <div class="checkbox-group-grid">
+                <label class="checkbox-chip" id="duel-bloodlines-chip-a">
+                  <input type="checkbox" id="duel-bloodlines-a" data-tech-id="435" data-min-age="2" checked>
+                  <span id="duel-bloodlines-label-a">Pureza de sangre (+20 HP Cab.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-husbandry-chip-a">
+                  <input type="checkbox" id="duel-husbandry-a" data-tech-id="39" data-min-age="3" checked>
+                  <span>Ganadería (+10% Vel. Cab.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-squires-chip-a">
+                  <input type="checkbox" id="duel-squires-a" data-tech-id="215" data-min-age="3" checked>
+                  <span>Escuderos (+10% Vel. Inf.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-gambesons-chip-a">
+                  <input type="checkbox" id="duel-gambesons-a" data-tech-id="875" data-min-age="3" checked>
+                  <span id="duel-gambesons-label-a">Gambesones (+1 P. Arm.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-thumb-ring-chip-a">
+                  <input type="checkbox" id="duel-thumb-ring-a" data-tech-id="437" data-min-age="3" checked>
+                  <span>Dactilera (Thumb Ring)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-parthian-chip-a">
+                  <input type="checkbox" id="duel-parthian-a" data-tech-id="436" data-min-age="4">
+                  <span>Táctica de los partos (+1/+2 Arm., +2 vs Lanc.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-cranequins-chip-a">
+                  <input type="checkbox" id="duel-cranequins-a" data-tech-id="1452" data-min-age="3">
+                  <span>Cranequines (+1 Rango/LOS, +2 vs Inf.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-chemistry-chip-a">
+                  <input type="checkbox" id="duel-chemistry-a" data-tech-id="47" data-min-age="4" checked>
+                  <span>Química (+1 Pierce)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-centurion-chip-a">
+                  <input type="checkbox" id="duel-centurion-a" data-min-age="3">
+                  <span>Aura de Centurión (+15% Vel, +20% Cad)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Contenedor de Tecnologías Navales de Universidad A (Visible solo para Barcos Clase 16) -->
+            <div id="naval-upgrades-container-a" class="naval-upgrades-container" style="display: none;">
+              <span class="fighter-label">⚓ Tecnologías Navales de Universidad (7 Mejoras):</span>
+              <div class="checkbox-group-grid" style="margin-top: 6px;">
+                <!-- 1. Línea Defensiva de Casco (Armadura Pierce) -->
+                <label class="checkbox-chip" id="duel-careening-chip-a">
+                  <input type="checkbox" id="duel-careening-a" data-tech-id="374" data-min-age="3" checked>
+                  <span>Carenado (+1 Arm. Pierce)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-dry-dock-chip-a">
+                  <input type="checkbox" id="duel-dry-dock-a" data-tech-id="375" data-min-age="4" checked>
+                  <span>Dique seco (+1 Arm. Pierce adic.)</span>
+                </label>
+
+                <!-- 2. Línea de Navegación (Velocidad) -->
+                <label class="checkbox-chip" id="duel-clinker-chip-a">
+                  <input type="checkbox" id="duel-clinker-a" data-tech-id="908" data-min-age="3" checked>
+                  <span>Construcción con tingladillo (+10% Vel.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-carvel-chip-a">
+                  <input type="checkbox" id="duel-carvel-a" data-tech-id="907" data-min-age="4" checked>
+                  <span>Casco liso (+10% Vel. adic.)</span>
+                </label>
+
+                <!-- 3. Balística y Artillería -->
+                <label class="checkbox-chip" id="duel-ballistics-chip-a">
+                  <input type="checkbox" id="duel-ballistics-a" data-tech-id="93" data-min-age="3" checked>
+                  <span>Balística (100% Puntería)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-naval-chemistry-chip-a">
+                  <input type="checkbox" id="duel-naval-chemistry-a" data-tech-id="47" data-min-age="4" checked>
+                  <span>Química (+1 ATQ Pierce)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-siphons-chip-a">
+                  <input type="checkbox" id="duel-siphons-a" data-tech-id="909" data-min-age="3">
+                  <span>Sifones / Incendiarias (Bonus Fuego/Dromón)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Coronas Dinámicas (Tecnologías Únicas) A -->
+            <div class="unique-techs-section">
+              <span class="fighter-label">👑 Tecnologías Únicas (Coronas):</span>
+              <div id="unique-techs-container" class="unique-techs-container" data-side="a">
+                <!-- Renderizado dinámicamente según la civilización seleccionada -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL CENTRAL (MANDO, ACCIÓN Y RESULTADOS) -->
+        <div class="duel-center-panel">
+          
+          <!-- Presets Rápidos -->
+          <div class="duel-presets-board bevel-inset">
+            <span class="presets-title">⚡ Duelos Clásicos (Presets Rápidos):</span>
+            <div class="presets-pills-row">
+              <button class="preset-pill-btn" data-preset="paladin-vs-halberdier">Paladín vs Alabardero</button>
+              <button class="preset-pill-btn" data-preset="leitis-vs-paladin">Leitis vs Paladín</button>
+              <button class="preset-pill-btn" data-preset="coustillier-vs-champion">Coustillier vs Campeón</button>
+              <button class="preset-pill-btn" data-preset="shrivamsha-vs-arbalester">Shrivamsha vs Ballestero</button>
+              <button class="preset-pill-btn" data-preset="chukonu-vs-champion">Chu Ko Nu vs Campeón</button>
+            </div>
+          </div>
+
+          <!-- Botón de Simulación -->
+          <div class="simulate-btn-wrapper">
+            <button id="btn-simulate-duel" class="btn-simulate-duel bevel-raised">
+              <span>⚔️</span>
+              <span>SIMULAR DUELO</span>
+              <span>⚔️</span>
+            </button>
+          </div>
+
+          <!-- Panel de Resultados del Enfrentamiento -->
+          <div id="duel-results-card" class="duel-results-card bevel-raised">
+            
+            <!-- Banner de Victoria -->
+            <div id="victory-banner" class="victory-ribbon-banner">
+              <h3 id="victory-title" class="victory-title">👑 Vencedor: Simulando...</h3>
+              <p id="victory-meta" class="victory-meta">Presiona "SIMULAR DUELO" para calcular el resultado del combate.</p>
+            </div>
+
+            <!-- Tabla de Desglose de Daño -->
+            <div class="duel-table-wrapper">
+              <table class="duel-damage-table">
+                <thead>
+                  <tr>
+                    <th>Métrica de Ataque</th>
+                    <th id="th-name-a" class="table-fighter-a">Combatiente I</th>
+                    <th id="th-name-b" class="table-fighter-b">Combatiente II</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Daño 1.ᵉʳ Golpe</strong></td>
+                    <td id="res-first-a">-</td>
+                    <td id="res-first-b">-</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Daño Sostenido</strong></td>
+                    <td id="res-regular-a">-</td>
+                    <td id="res-regular-b">-</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Cadencia (Reload)</strong></td>
+                    <td id="res-reload-a">-</td>
+                    <td id="res-reload-b">-</td>
+                  </tr>
+                  <tr>
+                    <td><strong>DPS Efectivo</strong></td>
+                    <td id="res-dps-a">-</td>
+                    <td id="res-dps-b">-</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Golpes para matar (HTK)</strong></td>
+                    <td id="res-htk-a">-</td>
+                    <td id="res-htk-b">-</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tiempo para matar (TTK)</strong></td>
+                    <td id="res-ttk-a">-</td>
+                    <td id="res-ttk-b">-</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Golpes Asestados</strong></td>
+                    <td id="res-hits-a">-</td>
+                    <td id="res-hits-b">-</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Vida Restante</strong></td>
+                    <td id="res-hp-a">-</td>
+                    <td id="res-hp-b">-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Métricas Clave (HTK, TTK, Eficiencia) de Forma Simétrica -->
+            <div class="duel-metrics-grid">
+              <div class="duel-metric-card metric-card-blue">
+                <span id="metric-htk-a" class="metric-card-val val-blue">-</span>
+                <span class="metric-card-label">HTK Combatiente I</span>
+              </div>
+              <div class="duel-metric-card metric-card-red">
+                <span id="metric-htk-b" class="metric-card-val val-red">-</span>
+                <span class="metric-card-label">HTK Combatiente II</span>
+              </div>
+              <div class="duel-metric-card">
+                <span id="metric-duration" class="metric-card-val">-</span>
+                <span id="metric-ttk" style="display:none;">-</span>
+                <span id="metric-htk" style="display:none;">-</span>
+                <span class="metric-card-label">Duración Combate</span>
+              </div>
+              <div class="duel-metric-card metric-card-blue">
+                <span id="metric-ttk-a" class="metric-card-val val-blue">-</span>
+                <span class="metric-card-label">TTK Combatiente I</span>
+              </div>
+              <div class="duel-metric-card metric-card-red">
+                <span id="metric-ttk-b" class="metric-card-val val-red">-</span>
+                <span class="metric-card-label">TTK Combatiente II</span>
+              </div>
+              <div class="duel-metric-card">
+                <span id="metric-efficiency" class="metric-card-val">-</span>
+                <span class="metric-card-label">Ratio de Recursos</span>
+              </div>
+            </div>
+
+            <!-- Eficiencia de Recursos Detallada -->
+            <div id="resource-efficiency-detail" class="resource-efficiency-box">
+              Cálculo de eficiencia de recursos: pendiente de simulación.
+            </div>
+
+            <!-- Registro / Log de Combate (Timeline continuo) -->
+            <div class="tactic-header-inline" style="margin-top: 10px;">
+              <span class="fighter-label">📜 Crónica del Combate (Log Tick a Tick):</span>
+              <button id="btn-toggle-log" class="wood-btn wood-btn-sm">Mostrar / Ocultar</button>
+            </div>
+            <div id="combat-log-stream" class="combat-log-wrapper" style="display: block;">
+              <div class="log-entry">Selecciona combatientes y haz clic en "SIMULAR DUELO" para observar el combate.</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- COMBATIENTE B (ROJO) -->
+        <div id="combatant2" class="fighter-panel fighter-b combatant-right bevel-raised">
+          <div class="fighter-badge-banner">
+            <span>🛡️</span>
+            <span>Combatiente II (Rojo)</span>
+          </div>
+
+          <div class="fighter-select-group">
+            <label for="duel-civ-b" class="fighter-label">Civilización:</label>
+            <select id="duel-civ-b" class="medieval-select tactic-select">
+              <!-- Inyectado dinámicamente -->
+            </select>
+          </div>
+
+          <div class="fighter-select-group">
+            <label for="duel-age-b" class="fighter-label">Edad del Combatiente:</label>
+            <select id="duel-age-b" class="medieval-select tactic-select age-selector" data-side="b">
+              <option value="1">Alta Edad Media</option>
+              <option value="2">Edad Feudal</option>
+              <option value="3">Edad de los Castillos</option>
+              <option value="4" selected>Edad Imperial</option>
+            </select>
+          </div>
+
+          <div class="fighter-select-group">
+            <label for="duel-unit-b" class="fighter-label">Unidad Militar:</label>
+            <select id="duel-unit-b" class="medieval-select tactic-select">
+              <!-- Inyectado dinámicamente -->
+            </select>
+          </div>
+
+          <!-- Tarjeta de la Unidad B -->
+          <div class="fighter-unit-card bevel-inset">
+            <div class="fighter-portrait-row">
+              <div class="fighter-portrait-box">
+                <img id="duel-img-b" class="fighter-portrait-img" src="./img/units/359.png" alt="Unidad B">
+                <span id="duel-img-fallback-b" class="fighter-img-fallback" style="display:none;">🛡️</span>
+              </div>
+              <div class="fighter-name-box">
+                <h4 id="duel-name-b" class="fighter-unit-name">Cargando...</h4>
+                <span id="duel-meta-b" class="fighter-unit-meta">-</span>
+              </div>
+            </div>
+
+            <!-- Coste Militar Dinámico B (Rojo) -->
+            <div class="combatant-cost-container" id="combatant-cost-rojo" data-side="b">
+              <!-- Se inyectarán dinámicamente los badges de recursos -->
+            </div>
+
+            <!-- Barra de HP B -->
+            <div class="fighter-hp-container">
+              <div class="fighter-hp-header">
+                <span>Puntos de Vida:</span>
+                <span id="duel-hp-text-b" class="hp-label">0 / 0</span>
+              </div>
+              <div class="fighter-hp-bar">
+                <div id="duel-hp-fill-b" class="fighter-hp-fill hp-bar-fill" style="width: 100%;"></div>
+                <span id="duel-hp-bar-text-b" class="fighter-hp-bar-text">100%</span>
+              </div>
+            </div>
+
+            <!-- Atributos Clave B -->
+            <div class="fighter-stats-grid">
+              <div class="stat-chip">
+                <span class="stat-chip-label">Ataque</span>
+                <span id="duel-stat-atk-b" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Arm. Melee</span>
+                <span id="duel-stat-melee-b" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Arm. Pierce</span>
+                <span id="duel-stat-pierce-b" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Cadencia</span>
+                <span id="duel-stat-reload-b" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Rango</span>
+                <span id="duel-stat-range-b" class="stat-chip-val">-</span>
+              </div>
+              <div class="stat-chip">
+                <span class="stat-chip-label">Velocidad</span>
+                <span id="duel-stat-speed-b" class="stat-chip-val">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modificadores Tácticos B -->
+          <div class="tactics-box bevel-inset">
+            <h4 class="tactics-box-title">⚙️ Modificadores & Mejoras</h4>
+
+            <!-- Elevación B -->
+            <div class="tactic-row">
+              <div class="tactic-header-inline">
+                <label for="duel-elev-b" class="fighter-label">Elevación / Terreno:</label>
+              </div>
+              <select id="duel-elev-b" class="medieval-select tactic-select elevation-selector" data-side="b">
+                <option value="flat" selected>Terreno Plano (Neutro)</option>
+                <option value="high">Colina Arriba (+25% Daño / +50% Tártaros)</option>
+                <option value="low">Colina Abajo (-25% Daño infligido)</option>
+              </select>
+            </div>
+
+            <!-- Stacks Slider B (0-4) -->
+            <div class="tactic-row">
+              <div class="tactic-header-inline">
+                <label for="duel-stacks-b" class="fighter-label">Acumulaciones / Reliquias (0-4):</label>
+                <span id="duel-stacks-val-b" class="tactic-badge-val">0</span>
+              </div>
+              <input type="range" id="duel-stacks-b" class="medieval-slider" min="0" max="4" value="0">
+              <span id="duel-stacks-meta-b" class="fighter-unit-meta">Lituanos (Reliquias) • Jaguar (+1 Atk) • Tigresa (+10 HP / +1 Atk)</span>
+            </div>
+
+            <!-- Contenedor de Herrería B (Aplica a Unidades Terrestres y Navales según su Familia) -->
+            <div id="blacksmith-upgrades-container-b" class="blacksmith-upgrades-container">
+              <!-- Herrería Melee B -->
+              <div class="tactic-row" id="duel-smith-melee-row-b">
+                <div class="tactic-header-inline">
+                  <label for="duel-smith-melee-b" class="fighter-label">Herrería Melee:</label>
+                </div>
+                <select id="duel-smith-melee-b" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin mejoras (+0)</option>
+                  <option value="1" data-tech-id="67" data-min-age="2">Forja (+1)</option>
+                  <option value="2" data-tech-id="68" data-min-age="3">Fundición de hierro (+2)</option>
+                  <option value="3" data-tech-id="75" data-min-age="4" selected>Alto horno (+4)</option>
+                </select>
+              </div>
+
+              <!-- Herrería Flechas B -->
+              <div class="tactic-row" id="duel-smith-pierce-row-b">
+                <div class="tactic-header-inline">
+                  <label for="duel-smith-pierce-b" class="fighter-label">Herrería Flechas:</label>
+                </div>
+                <select id="duel-smith-pierce-b" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin mejoras (+0)</option>
+                  <option value="1" data-tech-id="199" data-min-age="2">Flecha pedernal (+1)</option>
+                  <option value="2" data-tech-id="200" data-min-age="3">Punzón (+2)</option>
+                  <option value="3" data-tech-id="201" data-min-age="4" selected>Braserío (+3)</option>
+                </select>
+              </div>
+
+              <!-- Armadura Infantería B -->
+              <div class="tactic-row" id="duel-armor-row-b">
+                <div class="tactic-header-inline">
+                  <label for="duel-armor-b" class="fighter-label">Armadura Infantería:</label>
+                </div>
+                <select id="duel-armor-b" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin armadura (+0/+0)</option>
+                  <option value="1" data-tech-id="74" data-min-age="2">Escamas (+1/+1)</option>
+                  <option value="2" data-tech-id="76" data-min-age="3">Malla (+2/+2)</option>
+                  <option value="3" data-tech-id="77" data-min-age="4" selected>Placas (+3/+4)</option>
+                </select>
+              </div>
+
+              <!-- Armadura Caballería B -->
+              <div class="tactic-row" id="duel-armor-cav-row-b">
+                <div class="tactic-header-inline">
+                  <label for="duel-armor-cav-b" class="fighter-label">Armadura Caballería:</label>
+                </div>
+                <select id="duel-armor-cav-b" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin armadura (+0/+0)</option>
+                  <option value="1" data-tech-id="81" data-min-age="2">Barda escamas (+1/+1)</option>
+                  <option value="2" data-tech-id="82" data-min-age="3">Barda malla (+2/+2)</option>
+                  <option value="3" data-tech-id="80" data-min-age="4" selected>Barda placas (+3/+4)</option>
+                </select>
+              </div>
+
+              <!-- Armadura Arqueros B -->
+              <div class="tactic-row" id="duel-armor-arch-row-b">
+                <div class="tactic-header-inline">
+                  <label for="duel-armor-arch-b" class="fighter-label">Armadura Arqueros:</label>
+                </div>
+                <select id="duel-armor-arch-b" class="medieval-select tactic-select">
+                  <option value="0" data-min-age="1">Sin armadura (+0/+0)</option>
+                  <option value="1" data-tech-id="211" data-min-age="2">Armadura acolchada (+1/+1)</option>
+                  <option value="2" data-tech-id="212" data-min-age="3">Armadura de cuero (+2/+2)</option>
+                  <option value="3" data-tech-id="219" data-min-age="4" selected>Armadura de anillas (+3/+4)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Contenedor de Tecnologías Terrestres B -->
+            <div id="land-upgrades-container-b" class="land-upgrades-container">
+              <!-- Checkboxes Generales, Movilidad y Arquería Avanzada B -->
+              <div class="checkbox-group-grid">
+                <label class="checkbox-chip" id="duel-bloodlines-chip-b">
+                  <input type="checkbox" id="duel-bloodlines-b" data-tech-id="435" data-min-age="2" checked>
+                  <span id="duel-bloodlines-label-b">Pureza de sangre (+20 HP Cab.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-husbandry-chip-b">
+                  <input type="checkbox" id="duel-husbandry-b" data-tech-id="39" data-min-age="3" checked>
+                  <span>Ganadería (+10% Vel. Cab.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-squires-chip-b">
+                  <input type="checkbox" id="duel-squires-b" data-tech-id="215" data-min-age="3" checked>
+                  <span>Escuderos (+10% Vel. Inf.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-gambesons-chip-b">
+                  <input type="checkbox" id="duel-gambesons-b" data-tech-id="875" data-min-age="3" checked>
+                  <span id="duel-gambesons-label-b">Gambesones (+1 P. Arm.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-thumb-ring-chip-b">
+                  <input type="checkbox" id="duel-thumb-ring-b" data-tech-id="437" data-min-age="3" checked>
+                  <span>Dactilera (Thumb Ring)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-parthian-chip-b">
+                  <input type="checkbox" id="duel-parthian-b" data-tech-id="436" data-min-age="4">
+                  <span>Táctica de los partos (+1/+2 Arm., +2 vs Lanc.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-cranequins-chip-b">
+                  <input type="checkbox" id="duel-cranequins-b" data-tech-id="1452" data-min-age="3">
+                  <span>Cranequines (+1 Rango/LOS, +2 vs Inf.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-chemistry-chip-b">
+                  <input type="checkbox" id="duel-chemistry-b" data-tech-id="47" data-min-age="4" checked>
+                  <span>Química (+1 Pierce)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-centurion-chip-b">
+                  <input type="checkbox" id="duel-centurion-b" data-min-age="3">
+                  <span>Aura de Centurión (+15% Vel, +20% Cad)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Contenedor de Tecnologías Navales de Universidad B (Visible solo para Barcos Clase 16) -->
+            <div id="naval-upgrades-container-b" class="naval-upgrades-container" style="display: none;">
+              <span class="fighter-label">⚓ Tecnologías Navales de Universidad (7 Mejoras):</span>
+              <div class="checkbox-group-grid" style="margin-top: 6px;">
+                <!-- 1. Línea Defensiva de Casco (Armadura Pierce) -->
+                <label class="checkbox-chip" id="duel-careening-chip-b">
+                  <input type="checkbox" id="duel-careening-b" data-tech-id="374" data-min-age="3" checked>
+                  <span>Carenado (+1 Arm. Pierce)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-dry-dock-chip-b">
+                  <input type="checkbox" id="duel-dry-dock-b" data-tech-id="375" data-min-age="4" checked>
+                  <span>Dique seco (+1 Arm. Pierce adic.)</span>
+                </label>
+
+                <!-- 2. Línea de Navegación (Velocidad) -->
+                <label class="checkbox-chip" id="duel-clinker-chip-b">
+                  <input type="checkbox" id="duel-clinker-b" data-tech-id="908" data-min-age="3" checked>
+                  <span>Construcción con tingladillo (+10% Vel.)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-carvel-chip-b">
+                  <input type="checkbox" id="duel-carvel-b" data-tech-id="907" data-min-age="4" checked>
+                  <span>Casco liso (+10% Vel. adic.)</span>
+                </label>
+
+                <!-- 3. Balística y Artillería -->
+                <label class="checkbox-chip" id="duel-ballistics-chip-b">
+                  <input type="checkbox" id="duel-ballistics-b" data-tech-id="93" data-min-age="3" checked>
+                  <span>Balística (100% Puntería)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-naval-chemistry-chip-b">
+                  <input type="checkbox" id="duel-naval-chemistry-b" data-tech-id="47" data-min-age="4" checked>
+                  <span>Química (+1 ATQ Pierce)</span>
+                </label>
+
+                <label class="checkbox-chip" id="duel-siphons-chip-b">
+                  <input type="checkbox" id="duel-siphons-b" data-tech-id="909" data-min-age="3">
+                  <span>Sifones / Incendiarias (Bonus Fuego/Dromón)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Coronas Dinámicas (Tecnologías Únicas) B -->
+            <div class="unique-techs-section">
+              <span class="fighter-label">👑 Tecnologías Únicas (Coronas):</span>
+              <div id="unique-techs-container-b" class="unique-techs-container" data-side="b">
+                <!-- Renderizado dinámicamente según la civilización seleccionada -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7. VISTA: CALCULADORA ECONÓMICA -->
+    <section id="eco-view" class="view-section">
+      <!-- Contenido renderizado dinámicamente por ecoCalculator.js -->
+    </section>
+
+  </main>
+
+  <!-- Modal Medieval Informativo -->
+  <div id="medieval-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-box parchment-card bevel-raised">
+      <div class="modal-header">
+        <h3 id="modal-title" class="medieval-title">Módulo en Desarrollo</h3>
+        <button id="modal-close-btn" class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-message">Este módulo se encuentra actualmente en desarrollo para la siguiente fase.</p>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-ok-btn" class="wood-btn">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>Age of Empires II: DE Database & Tech Tree Tool • Basado en el esquema de SiegeEngineers</p>
+  </footer>
+
+  <script src="./civilizations.js"></script>
+  <script src="./data/units.js"></script>
+  <script src="./unitService.js"></script>
+  <script src="./unitClassification.js"></script>
+  <script src="./civEcoBonuses-v2.js"></script>
+  <script src="./civUnitDiscounts.js"></script>
+  <script src="./units.js"></script>
+  <script src="./unitModifiers.js"></script>
+  <script src="./civModifiers.js"></script>
+  <script src="./availability.js"></script>
+  <script src="./buildings.js"></script>
+  <script src="./buildingUpgrades.js"></script>
+  <script src="./buildingDeepDive.js"></script>
+  <script src="./techs.js"></script>
+  <script src="./techDeepDive.js"></script>
+  <script src="./techCatalog.js"></script>
+  <script src="./deepDive.js"></script>
+  <script src="./unitDeepDive.js"></script>
+  <script src="./ballistics.js"></script>
+  <script src="./combat.js"></script>
+  <script src="./combatSimulator.js"></script>
+  <script src="./civStringMap.js"></script>
+  <script src="./civTextParser.js"></script>
+  <script src="./civModifiersData.js"></script>
+  <script src="./civBonusParser.js"></script>
+  <script src="./techTree.js"></script>
+  <script src="./ecoRates.js"></script>
+  <script src="./ecoCalculator.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
